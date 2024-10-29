@@ -16,6 +16,9 @@ app.add_middleware(
 )
 
 app.title = "Back-AnsermaApp"
+@app.get("/")
+async def read_root():
+    return {"message": "Hello, World!"}
 
 # Inclusión de routers
 app.include_router(router=ciudadanos_controlador)
