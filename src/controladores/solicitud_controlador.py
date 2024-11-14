@@ -1,6 +1,6 @@
 from fastapi import Body, APIRouter
-from ..modelos.ciudadano import Ciudadano
-from ..Servicios.consultar_ciudadanos import consultar_ciudadanos
+from ..modulos.ciudadano.ciudadano_db_modelo import Ciudadano
+from ..modulos.ciudadano.consultar_ciudadanos import consultar_ciudadanos
 
 ciudadanos_controlador = APIRouter()
 

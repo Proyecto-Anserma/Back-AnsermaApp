@@ -1,1 +1,3 @@
 -- pip install fastapi sqlalchemy databases asyncpg psycopg2-binary # Base de datos
+-- pip install databases
+

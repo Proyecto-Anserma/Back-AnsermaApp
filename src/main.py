@@ -1,25 +1,16 @@
-from fastapi import FastAPI, Body
-from fastapi.responses import PlainTextResponse
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.controladores.ciudadano_controlador import ciudadanos_controlador
-from src.controladores.usuario_controlador import usuarios_controlador
+from database.db import database, Base, engine  # Importamos database, Base y engine
+from src import rutas 
 
 app = FastAPI()
 
-# Configuración de CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],  # Permite solicitudes de tu frontend
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.title = "Back-AnsermaApp"
-@app.get("/")
-async def read_root():
-    return {"message": "Hello, World!"}
-
-# Inclusión de routers
-app.include_router(router=ciudadanos_controlador)
-app.include_router(router=usuarios_controlador)
+rutas.include_routes(app)

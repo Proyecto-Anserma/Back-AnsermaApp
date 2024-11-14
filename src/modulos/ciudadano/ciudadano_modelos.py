@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import date
 
-class Ciudadano(BaseModel):
+class CiudadanoCreate(BaseModel):
     nombre_ciudadano: str
     apellido_ciudadano: str
     fecha_nacimiento_ciudadano: date
