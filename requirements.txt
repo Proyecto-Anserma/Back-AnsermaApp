@@ -1,5 +1,5 @@
 -- pip install fastapi sqlalchemy databases asyncpg psycopg2-binary # Base de datos
 -- pip install databases
 -- pip install geoalchemy2
-
+-- pip install shapely geoalchemy2
 

@@ -1,9 +1,8 @@
 from sqlalchemy import Column, Integer, String, Date, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
 from geoalchemy2 import Geometry
 from sqlalchemy.orm import relationship
-
-Base = declarative_base()
+from src.modulos import Base
+from ..referencias.referencias_db_modelo import TipoSolicitud
 
 class Solicitud(Base):
     __tablename__ = "solicitud"
@@ -15,7 +14,7 @@ class Solicitud(Base):
     geolocalizacion = Column(Geometry("POINT"), nullable=True)
     id_tipo_solicitud = Column(Integer, ForeignKey("tipo_solicitud.id_tipo_solicitud"), nullable=False)
     id_ubicacion_solicitud = Column(Integer, ForeignKey("ubicacion.id_ubicacion"), nullable=False)
-    id_ciudadano_solicitud = Column(Integer, ForeignKey("ciudadano.id_ciudadano"), nullable=False)
+    id_ciudadano_solicitud = Column(Integer, ForeignKey("ciudadano.numero_identificacion_ciudadano"), nullable=False)
 
     # Relaciones para cargar automáticamente los valores de las tablas de referencia
     tipo_solicitud = relationship("TipoSolicitud")

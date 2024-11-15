@@ -9,10 +9,6 @@ router = APIRouter(prefix="/referencias")
 async def read_tipo_solicitudes(db: AsyncSession = Depends(get_db)):
     return await get_tipo_solicitudes(db)
 
-@router.get("/ubicaciones/")
-async def read_ubicaciones(db: AsyncSession = Depends(get_db)):
-    return await get_ubicaciones(db)
-
 @router.get("/tipo_ubicaciones/")
 async def read_tipo_ubicaciones(db: AsyncSession = Depends(get_db)):
     return await get_tipo_ubicaciones(db)
