@@ -31,7 +31,6 @@ async def read_ciudadanos(db: AsyncSession = Depends(get_db)):
 @router.post("/ciudadanos/", response_model=CiudadanoResponse, status_code=status.HTTP_201_CREATED)
 async def create_ciudadano_endpoint(ciudadano: CiudadanoCreate, db: AsyncSession = Depends(get_db)):
     try:
-        # Procesamos el campo de geometría
         geom_str = ciudadano.geolocalizacion
         if geom_str.startswith('SRID='):
             srid = int(geom_str.split(';')[0].replace('SRID=', ''))
@@ -39,15 +38,10 @@ async def create_ciudadano_endpoint(ciudadano: CiudadanoCreate, db: AsyncSession
         else:
             srid = 4326
             wkt_str = geom_str
-        
-        # Preparamos los datos
+            
         ciudadano_dict = ciudadano.model_dump()
         ciudadano_dict['geolocalizacion'] = WKTElement(wkt_str, srid=srid)
-        
-        # Convertimos el teléfono a integer si es necesario
         ciudadano_dict['telefono_ciudadano'] = int(ciudadano_dict['telefono_ciudadano'])
-        
-        # Creamos el ciudadano
         nuevo_ciudadano = Ciudadano(**ciudadano_dict)
         db.add(nuevo_ciudadano)
         await db.commit()
@@ -61,6 +55,7 @@ async def create_ciudadano_endpoint(ciudadano: CiudadanoCreate, db: AsyncSession
             status_code=400,
             detail=f"Error al crear ciudadano: {str(e)}"
         )
+        
         
 @router.put("/ciudadanos/{ciudadano_id}", response_model=CiudadanoResponse)
 async def update_ciudadano_endpoint(
@@ -78,6 +73,7 @@ async def update_ciudadano_endpoint(
             status_code=400,
             detail=f"Error al actualizar ciudadano: {str(e)}"
         )
+        
 
 @router.delete("/ciudadanos/{ciudadano_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_ciudadano_endpoint(ciudadano_id: str, db: AsyncSession = Depends(get_db)):
