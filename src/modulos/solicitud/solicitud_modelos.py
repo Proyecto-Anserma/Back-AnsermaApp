@@ -1,19 +1,34 @@
-from pydantic import BaseModel
+from geoalchemy2.elements import WKBElement
+from geoalchemy2.shape import to_shape
+from pydantic import BaseModel, field_serializer
 from datetime import date
-from typing import Optional
+from typing import Any, Optional
 
 class SolicitudBase(BaseModel):
     descripcion_solicitud: str
     fecha_creacion_solicitud: date
     foto_solicitud: Optional[str] = None
-    geolocalizacion: Optional[str] = None  # Guardaremos el punto geográfico como un string tipo WKT (Well Known Text)
     id_tipo_solicitud: int
     id_ubicacion_solicitud: int
-    id_ciudadano_solicitud: int
+    id_ciudadano_solicitud: str
 
 class SolicitudCreate(SolicitudBase):
-    pass
+    geolocalizacion: str
 
 class SolicitudUpdate(SolicitudBase):
     descripcion_solicitud: Optional[str] = None
     fecha_creacion_solicitud: Optional[date] = None
+    geolocalizacion: str
+
+class SolicitudResponse(SolicitudBase):
+    geolocalizacion: Any
+
+    @field_serializer('geolocalizacion')
+    def serialize_geometry(self, geom: Any) -> str:
+        if isinstance(geom, WKBElement):
+            return f"SRID=4326;{to_shape(geom).wkt}"
+        return str(geom)
+
+    class Config:
+        from_attributes = True
+        arbitrary_types_allowed = True

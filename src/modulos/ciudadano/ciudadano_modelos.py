@@ -1,7 +1,7 @@
-from pydantic import BaseModel, field_serializer
-from datetime import date
 from geoalchemy2.elements import WKBElement
 from geoalchemy2.shape import to_shape
+from pydantic import BaseModel, field_serializer
+from datetime import date
 from typing import Any
 
 class CiudadanoBase(BaseModel):
