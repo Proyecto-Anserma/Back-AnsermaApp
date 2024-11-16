@@ -5,7 +5,7 @@ from geoalchemy2 import WKTElement
 from geoalchemy2.elements import WKTElement
 from shapely import wkt
 from .ciudadano_db_modelo import Ciudadano
-from .ciudadano_modelos import CiudadanoCreate, CiudadanoUpdate
+from .ciudadano_modelos import CiudadanoUpdate
 
 async def get_ciudadanos(db: AsyncSession):
     result = await db.execute(select(Ciudadano))

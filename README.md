@@ -5,7 +5,7 @@ Debe contar con versión de Python 3.13.0 instalada (con la ruta de path activa)
 
 # Correr en la terminal o consola:
 
-### 1. Instalar dependencias
+### 1. Crear ambiente virtual
 
 En powershell:
 ```bash
