@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from .solicitud_modelos import SolicitudCreate, SolicitudResponse, SolicitudUpdate
-from database.db import get_db
+from database.db_config import get_db_anserma
 from .solicitud_servicio import (
     get_solicitudes,
     create_solicitud,
@@ -13,7 +13,7 @@ from .solicitud_servicio import (
 router = APIRouter()
 
 @router.get("/solicitudes/", response_model=List[SolicitudResponse])
-async def read_solicitudes(db: AsyncSession = Depends(get_db)):
+async def read_solicitudes(db: AsyncSession = Depends(get_db_anserma)):
     try:
         solicitudes = await get_solicitudes(db)
         return solicitudes
@@ -24,7 +24,7 @@ async def read_solicitudes(db: AsyncSession = Depends(get_db)):
         )
 
 @router.post("/solicitudes/", response_model=SolicitudResponse, status_code=status.HTTP_201_CREATED)
-async def create_solicitud_endpoint(solicitud: SolicitudCreate, db: AsyncSession = Depends(get_db)):
+async def create_solicitud_endpoint(solicitud: SolicitudCreate, db: AsyncSession = Depends(get_db_anserma)):
     try:
         solicitud_dict = solicitud.model_dump()
         nueva_solicitud = await create_solicitud(db, solicitud_dict)
@@ -39,7 +39,7 @@ async def create_solicitud_endpoint(solicitud: SolicitudCreate, db: AsyncSession
 async def update_solicitud_endpoint(
     solicitud_id: int, 
     solicitud: SolicitudUpdate, 
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db_anserma)
 ):
     try:
         updated_solicitud = await update_solicitud(db, solicitud_id, solicitud)
@@ -53,7 +53,7 @@ async def update_solicitud_endpoint(
         )
 
 @router.delete("/solicitudes/{solicitud_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_solicitud_endpoint(solicitud_id: int, db: AsyncSession = Depends(get_db)):
+async def delete_solicitud_endpoint(solicitud_id: int, db: AsyncSession = Depends(get_db_anserma)):
     try:
         deleted = await delete_solicitud(db, solicitud_id)
         if not deleted:

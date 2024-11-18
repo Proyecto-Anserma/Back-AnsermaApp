@@ -1,20 +1,16 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from .referencias_db_modelo import TipoSolicitud, Genero, TipoUbicacion, PertenenciaEtnica
+from sqlalchemy.exc import SQLAlchemyError
+from fastapi import HTTPException
 
-async def get_tipo_solicitudes(db: AsyncSession):
-    result = await db.execute(select(TipoSolicitud))
-    return result.scalars().all()
-
-async def get_tipo_ubicaciones(db: AsyncSession):
-    result = await db.execute(select(TipoUbicacion))
-    return result.scalars().all()
-
-async def get_generos(db: AsyncSession):
-    result = await db.execute(select(Genero))
-    return result.scalars().all()
-
-async def get_pertenencia_etnica(db: AsyncSession):
-    result = await db.execute(select(PertenenciaEtnica))
-    return result.scalars().all()
-
+async def get_referencia(tabla, db: AsyncSession):
+    """
+    Función genérica para obtener datos de una tabla.
+    :param tabla: Modelo de la tabla (ej. TipoSolicitud, Genero, etc.)
+    :param db: Sesión de base de datos
+    """
+    try:
+        result = await db.execute(select(tabla))
+        return result.scalars().all()
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener datos: {str(e)}")

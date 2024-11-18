@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String, Date, ForeignKey
 from geoalchemy2 import Geometry
 from sqlalchemy.orm import relationship
 from src.modulos import Base
-from ..referencias.referencias_db_modelo import TipoSolicitud
 
 class Solicitud(Base):
     __tablename__ = "solicitud"

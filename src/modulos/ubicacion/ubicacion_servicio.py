@@ -8,6 +8,7 @@ async def get_ubicaciones(db: AsyncSession):
     result = await db.execute(select(Ubicacion))
     return result.scalars().all()
 
+
 async def create_ubicacion(db: AsyncSession, ubicacion_data: UbicacionCreate):
     nueva_ubicacion = Ubicacion(**ubicacion_data.model_dump())
     db.add(nueva_ubicacion)
