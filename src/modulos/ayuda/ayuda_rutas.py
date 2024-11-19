@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from .ayuda_modelos import AyudaCreate, AyudaResponse
 from database.db_config import get_db_anserma
-from .ayuda_servicio import get_ayudas, create_ayuda, delete_ayuda
+from .ayuda_servicio import get_ayudas, create_ayuda, update_ayuda, delete_ayuda
 
 router = APIRouter()
 
@@ -28,6 +28,31 @@ async def create_ayuda_endpoint(ayuda: AyudaCreate, db: AsyncSession = Depends(g
             status_code=400,
             detail=f"Error al crear ayuda: {str(e)}"
         )
+        
+        
+@router.put("/ayudas/{ayuda_id}", response_model=AyudaResponse, status_code=status.HTTP_200_OK)
+async def update_ayuda_endpoint(
+    ayuda_id: int, ayuda: AyudaCreate, db: AsyncSession = Depends(get_db_anserma)
+):
+    """
+    Actualiza una ayuda existente.
+    
+    :param ayuda_id: ID de la ayuda a actualizar
+    :param ayuda: Datos nuevos de la ayuda
+    :param db: Sesión de base de datos
+    :return: Ayuda actualizada o un error HTTP
+    """
+    try:
+        updated_ayuda = await update_ayuda(db, ayuda_id, ayuda)
+        if not updated_ayuda:
+            raise HTTPException(status_code=404, detail="Ayuda no encontrada")
+        return updated_ayuda
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error al actualizar ayuda: {str(e)}"
+        )
+
 
 @router.delete("/ayudas/{ayuda_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_ayuda_endpoint(ayuda_id: int, db: AsyncSession = Depends(get_db_anserma)):

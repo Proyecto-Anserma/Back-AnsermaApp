@@ -13,7 +13,7 @@ async def get_ayudas(db: AsyncSession):
 
 async def create_ayuda(db: AsyncSession, ayuda_data: AyudaCreate):
     try:
-        nueva_ayuda = Ayuda(**ayuda_data.dict())
+        nueva_ayuda = Ayuda(**ayuda_data.model_dump())
         db.add(nueva_ayuda)
         await db.commit()
         await db.execute(
@@ -24,6 +24,33 @@ async def create_ayuda(db: AsyncSession, ayuda_data: AyudaCreate):
     except Exception as e:
         await db.rollback()
         raise Exception(f"Error al crear ayuda: {str(e)}")
+    
+
+async def update_ayuda(db: AsyncSession, ayuda_id: int, ayuda_data: AyudaCreate):
+    """
+    Actualiza una ayuda existente.
+
+    :param db: Sesión de base de datos
+    :param ayuda_id: ID de la ayuda a actualizar
+    :param ayuda_data: Datos de la ayuda a actualizar
+    :return: La ayuda actualizada o None si no se encuentra
+    """
+    try:
+        result = await db.execute(
+            sql_update(Ayuda)
+            .where(Ayuda.id_ayuda == ayuda_id)
+            .values(**ayuda_data.dict())
+            .returning(Ayuda)
+        )
+        updated_ayuda = result.scalar_one_or_none()
+        if updated_ayuda:
+            await db.commit()
+            await db.refresh(updated_ayuda)
+        return updated_ayuda
+    except Exception as e:
+        await db.rollback()
+        raise Exception(f"Error al actualizar ayuda: {str(e)}")
+    
 
 async def delete_ayuda(db: AsyncSession, ayuda_id: int):
     try:

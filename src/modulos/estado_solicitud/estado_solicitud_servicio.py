@@ -18,8 +18,7 @@ async def create_estado_solicitud(db: AsyncSession, estado_solicitud_data: dict)
         await db.commit()
         await db.execute(
             text("SELECT setval('estado_solicitud_id_estado_solicitud_seq', (SELECT MAX(id_estado_solicitud) FROM estado_solicitud))")
-        )
-        
+        ) 
         await db.refresh(nuevo_estado_solicitud)
         return nuevo_estado_solicitud
     except Exception as e:

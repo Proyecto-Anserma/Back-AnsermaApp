@@ -22,7 +22,6 @@ async def create_usuario(db: AsyncSession, usuario_data: dict):
         await db.execute(
             text("SELECT setval('usuario_numero_identificacion_usuario_seq', (SELECT MAX(numero_identificacion_usuario) FROM usuario))")
         )
-
         await db.refresh(nuevo_usuario)
         return nuevo_usuario
     except Exception as e:
