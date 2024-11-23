@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import text, select, update as sql_update, delete as sql_delete
 from .solicitud_db_modelo import Solicitud
-from .solicitud_modelos import SolicitudUpdate
+from .solicitud_modelos import SolicitudUpdate, SolicitudFiltrar
 
 async def get_solicitudes(db: AsyncSession):
     try:
@@ -10,6 +10,34 @@ async def get_solicitudes(db: AsyncSession):
         return result.scalars().all()
     except Exception as e:
         raise Exception(f"Error al obtener solicitudes: {str(e)}")
+    
+
+async def filtrar_solicitudes(
+    db: AsyncSession, 
+    filtros: SolicitudFiltrar
+):
+    """
+    Filtra solicitudes por descripción y/o id_ciudadano_solicitud.
+    Si no se proporcionan filtros, devuelve todas las solicitudes.
+    """
+    try:
+        # Construcción inicial de la consulta
+        query = select(Solicitud)
+        
+        # Agrega condiciones dinámicamente basadas en los filtros
+        if filtros.descripcion_solicitud:
+            query = query.where(Solicitud.descripcion_solicitud.ilike(f"%{filtros.descripcion_solicitud}%"))
+        
+        if filtros.id_ciudadano_solicitud:
+            query = query.where(Solicitud.id_ciudadano_solicitud == filtros.id_ciudadano_solicitud)
+        
+        # Ejecuta la consulta con los filtros aplicados
+        result = await db.execute(query)
+        solicitudes = result.scalars().all()
+
+        return solicitudes
+    except Exception as e:
+        raise Exception(f"Error al filtrar solicitudes: {str(e)}")
 
 
 async def create_solicitud(db: AsyncSession, solicitud_data: dict):

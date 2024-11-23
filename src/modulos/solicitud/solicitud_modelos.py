@@ -12,12 +12,11 @@ class SolicitudBase(BaseModel):
     id_ubicacion_solicitud: int
     id_ciudadano_solicitud: str
 
-class SolicitudCreate(SolicitudBase):
-    geolocalizacion: str
-
-class SolicitudUpdate(SolicitudBase):
+class SolicitudFiltrar(BaseModel):
     descripcion_solicitud: Optional[str] = None
-    fecha_creacion_solicitud: Optional[date] = None
+    id_ciudadano_solicitud: Optional[str] = None
+
+class SolicitudCreate(SolicitudBase):
     geolocalizacion: str
 
 class SolicitudResponse(SolicitudBase):
