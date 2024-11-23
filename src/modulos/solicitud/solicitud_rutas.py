@@ -1,23 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
-from .solicitud_modelos import SolicitudCreate, SolicitudResponse, SolicitudUpdate, SolicitudFiltrar
+from .solicitud_modelos import SolicitudCreate, SolicitudResponse, SolicitudBase, SolicitudFiltrar
 from database.db_config import get_db_anserma
 from .solicitud_servicio import *
 
 router = APIRouter()
-
-'''Consultar todas las solicitudes'''
-@router.get("/consultar-solicitudes/", response_model=List[SolicitudResponse])
-async def read_solicitudes(db: AsyncSession = Depends(get_db_anserma)):
-    try:
-        solicitudes = await get_solicitudes(db)
-        return solicitudes
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error al obtener solicitudes: {str(e)}"
-        )
         
 @router.post("/filtrar-solicitudes/", response_model=List[SolicitudResponse])
 async def filtrar_solicitudes_endpoint(
@@ -51,11 +39,10 @@ async def create_solicitud_endpoint(solicitud: SolicitudCreate, db: AsyncSession
             detail=f"Error al crear solicitud: {str(e)}"
         )
 
-''' Editar solicitud'''
 @router.put("/editar-solicitud/{solicitud_id}", response_model=SolicitudResponse)
 async def update_solicitud_endpoint(
     solicitud_id: int, 
-    solicitud: SolicitudUpdate, 
+    solicitud: SolicitudBase, 
     db: AsyncSession = Depends(get_db_anserma)
 ):
     try:
@@ -68,6 +55,7 @@ async def update_solicitud_endpoint(
             status_code=400,
             detail=f"Error al actualizar solicitud: {str(e)}"
         )
+
 
 '''Eliminar solicitud'''
 @router.delete("/eliminar-solicitud/{solicitud_id}", status_code=status.HTTP_204_NO_CONTENT)

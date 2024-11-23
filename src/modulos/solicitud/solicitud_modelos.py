@@ -5,12 +5,13 @@ from datetime import date
 from typing import Any, Optional
 
 class SolicitudBase(BaseModel):
+    id_solicitud: int
     descripcion_solicitud: str
     fecha_creacion_solicitud: date
-    foto_solicitud: Optional[str] = None
     id_tipo_solicitud: int
     id_ubicacion_solicitud: int
     id_ciudadano_solicitud: str
+    foto_solicitud: Optional[str] = None
 
 class SolicitudFiltrar(BaseModel):
     descripcion_solicitud: Optional[str] = None

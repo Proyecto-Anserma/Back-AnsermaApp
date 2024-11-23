@@ -2,15 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import text, select, update as sql_update, delete as sql_delete
 from .solicitud_db_modelo import Solicitud
-from .solicitud_modelos import SolicitudUpdate, SolicitudFiltrar
-
-async def get_solicitudes(db: AsyncSession):
-    try:
-        result = await db.execute(select(Solicitud))
-        return result.scalars().all()
-    except Exception as e:
-        raise Exception(f"Error al obtener solicitudes: {str(e)}")
-    
+from .solicitud_modelos import *
 
 async def filtrar_solicitudes(
     db: AsyncSession, 
@@ -48,7 +40,6 @@ async def create_solicitud(db: AsyncSession, solicitud_data: dict):
         await db.execute(
             text("SELECT setval('solicitud_id_solicitud_seq', (SELECT MAX(id_solicitud) FROM solicitud))")
         )
-        
         await db.refresh(nueva_solicitud)
         return nueva_solicitud
     except Exception as e:
@@ -56,25 +47,38 @@ async def create_solicitud(db: AsyncSession, solicitud_data: dict):
         raise Exception(f"Error al crear solicitud: {str(e)}")
 
 
-async def update_solicitud(db: AsyncSession, solicitud_id: int, solicitud_data: SolicitudUpdate):
+async def update_solicitud(db: AsyncSession, solicitud_id: int, solicitud_data: SolicitudBase):
     try:
+        # Buscar la solicitud existente
         result = await db.execute(select(Solicitud).where(Solicitud.id_solicitud == solicitud_id))
         solicitud = result.scalar_one_or_none()
         if solicitud is None:
-            return None
+            return None  # Devuelve None si no se encuentra la solicitud
 
+        # Preparar los datos para la actualización
         update_data = solicitud_data.model_dump(exclude_unset=True)
+
+        # Aplicar los cambios en la base de datos
         await db.execute(
             sql_update(Solicitud)
             .where(Solicitud.id_solicitud == solicitud_id)
             .values(**update_data)
         )
         await db.commit()
+
+        # Refrescar el objeto actualizado
         await db.refresh(solicitud)
-        return solicitud
+
+        # Construir la respuesta sin duplicar el campo 'geolocalizacion'
+        solicitud_dict = solicitud.__dict__.copy()  # Copiar los datos del objeto SQLAlchemy
+        geolocalizacion = solicitud_dict.pop("geolocalizacion", None)  # Extraer geolocalización
+        solicitud_response = SolicitudResponse(**solicitud_dict, geolocalizacion=geolocalizacion)
+
+        return solicitud_response
     except Exception as e:
         await db.rollback()
         raise Exception(f"Error al actualizar solicitud: {str(e)}")
+
 
 
 async def delete_solicitud(db: AsyncSession, solicitud_id: int):
