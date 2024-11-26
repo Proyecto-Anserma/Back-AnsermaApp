@@ -1,17 +1,18 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from geoalchemy2.elements import WKTElement
 from typing import List
 from shapely import wkt
 from .ciudadano_db_modelo import Ciudadano
-from .ciudadano_modelos import CiudadanoCreate, CiudadanoResponse, CiudadanoUpdate
+from .ciudadano_modelos import CiudadanoCreate, CiudadanoResponse, CiudadanoUpdate, CiudadanosFiltrar
 from database.db_config import get_db_anserma
 from .ciudadano_servicio import (
     get_ciudadanos,
     create_ciudadano,
     update_ciudadano,
     delete_ciudadano,
+    filtrar_ciudadanos
 )
 
 router = APIRouter()
@@ -72,4 +73,22 @@ async def delete_ciudadano_endpoint(ciudadano_id: str, db: AsyncSession = Depend
         raise HTTPException(
             status_code=400,
             detail=f"Error al eliminar ciudadano: {str(e)}"
+        )
+    
+@router.post("/filtrar-ciudadanos/", response_model=List[CiudadanoResponse])
+async def filtrar_ciudadanos_endpoint(
+    filtros: CiudadanosFiltrar = Body(...),
+    db: AsyncSession = Depends(get_db_anserma)
+):
+    """
+    Filtra ciudadanos por cedula.
+    Si no se envían filtros, devuelve todas los ciudadanos.
+    """
+    try:
+        ciudadanos = await filtrar_ciudadanos(db, filtros)
+        return ciudadanos
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error al filtrar ciudadanos: {str(e)}"
         )

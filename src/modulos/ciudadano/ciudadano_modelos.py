@@ -2,7 +2,7 @@ from geoalchemy2.elements import WKBElement
 from geoalchemy2.shape import to_shape
 from pydantic import BaseModel, field_serializer
 from datetime import date
-from typing import Any
+from typing import Any, Optional
 
 class CiudadanoBase(BaseModel):
     numero_identificacion_ciudadano: str
@@ -33,3 +33,7 @@ class CiudadanoResponse(CiudadanoBase):
     class Config:
         from_attributes = True
         arbitrary_types_allowed = True
+
+
+class CiudadanosFiltrar(BaseModel):
+    numero_identificacion_ciudadano: Optional[str] = None

@@ -5,7 +5,7 @@ from geoalchemy2 import WKTElement
 from geoalchemy2.elements import WKTElement
 from shapely import wkt
 from .ciudadano_db_modelo import Ciudadano
-from .ciudadano_modelos import CiudadanoUpdate
+from .ciudadano_modelos import CiudadanoUpdate, CiudadanosFiltrar
 
 async def get_ciudadanos(db: AsyncSession):
     result = await db.execute(select(Ciudadano))
@@ -64,3 +64,29 @@ async def delete_ciudadano(db: AsyncSession, ciudadano_id: str):
     except Exception as e:
         await db.rollback()
         raise Exception(f"Error al eliminar ciudadano: {str(e)}")
+    
+
+
+async def filtrar_ciudadanos(
+    db: AsyncSession, 
+    filtros: CiudadanosFiltrar
+):
+    """
+    Filtra ciudadanos por descripción y/o id_ciudadano_solicitud.
+    Si no se proporcionan filtros, devuelve todas las ciudadanos.
+    """
+    try:
+        # Construcción inicial de la consulta
+        query = select(Ciudadano)
+        
+        # Agrega condiciones dinámicamente basadas en los filtros
+        if filtros.numero_identificacion_ciudadano:
+            query = query.where(Ciudadano.numero_identificacion_ciudadano.ilike(f"%{Ciudadano.numero_identificacion_ciudadano}%"))
+        
+        # Ejecuta la consulta con los filtros aplicados
+        result = await db.execute(query)
+        ciudadanos = result.scalars().all()
+
+        return ciudadanos
+    except Exception as e:
+        raise Exception(f"Error al filtrar solicitudes: {str(e)}")

@@ -2,7 +2,7 @@ from geoalchemy2 import Geometry
 from sqlalchemy import Column, String, Date, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from src.modulos import Base
-
+from typing import Any, Optional
 class Ciudadano(Base):
     __tablename__ = "ciudadano"
     numero_identificacion_ciudadano = Column(String, primary_key=True)
@@ -20,3 +20,5 @@ class Ciudadano(Base):
     ubicacion = relationship("Ubicacion")
     pertenencia_etnica = relationship("PertenenciaEtnica")
     genero = relationship("Genero")
+
+
