@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from .ayuda_modelos import AyudaCreate, AyudaResponse
 from database.db_config import get_db_anserma
-from .ayuda_servicio import get_ayudas, create_ayuda, update_ayuda, delete_ayuda
+from .ayuda_servicio import get_ayudas, create_ayuda, update_ayuda, delete_ayuda, filtrar_ayudas
+from .ayuda_modelos import AyudasFiltrar
+
 
 router = APIRouter()
 
@@ -18,16 +20,31 @@ async def read_ayudas(db: AsyncSession = Depends(get_db_anserma)):
             detail=f"Error al obtener ayudas: {str(e)}"
         )
 
-@router.post("/ayudas/", response_model=AyudaResponse, status_code=status.HTTP_201_CREATED)
+'''crear ayuda '''
+@router.post("/crear-ayuda/", response_model=AyudaResponse, status_code=status.HTTP_201_CREATED)
 async def create_ayuda_endpoint(ayuda: AyudaCreate, db: AsyncSession = Depends(get_db_anserma)):
     try:
         nueva_ayuda = await create_ayuda(db, ayuda)
-        return nueva_ayuda
+        return nueva_ayuda 
     except Exception as e:
         raise HTTPException(
             status_code=400,
             detail=f"Error al crear ayuda: {str(e)}"
         )
+    
+@router.post("/filtrar-ayudas/", response_model=List[AyudaResponse])
+async def filtrar_ayudas_endpoint(
+    filtros: AyudasFiltrar = Body(...),
+    db: AsyncSession = Depends(get_db_anserma)
+):
+    try:
+        ayudas = await filtrar_ayudas(db, filtros)
+        return ayudas   
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error al filtrar ayudas: {str(e)}"
+        )  
         
         
 @router.put("/ayudas/{ayuda_id}", response_model=AyudaResponse, status_code=status.HTTP_200_OK)

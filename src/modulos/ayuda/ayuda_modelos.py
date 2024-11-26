@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import date
+from typing import Any, Optional
+
 
 class AyudaBase(BaseModel):
     descripcion_solicitud: str = Field(..., max_length=250)
@@ -15,3 +17,6 @@ class AyudaResponse(AyudaBase):
 
     class Config:
         orm_mode = True
+
+class AyudasFiltrar(BaseModel):
+    fecha_creacion_ayuda: Optional[date] = None
