@@ -47,7 +47,7 @@ async def filtrar_ayudas_endpoint(
         )  
         
         
-@router.put("/actualizar/{ayuda_id}", response_model=AyudaResponse, status_code=status.HTTP_200_OK)
+@router.put("/editar-ayuda/{ayuda_id}", response_model=AyudaResponse, status_code=status.HTTP_200_OK)
 async def update_ayuda_endpoint(
     ayuda_id: int, ayuda: AyudaCreate, db: AsyncSession = Depends(get_db_anserma)
 ):
