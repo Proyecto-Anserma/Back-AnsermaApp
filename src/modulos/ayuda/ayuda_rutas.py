@@ -47,7 +47,7 @@ async def filtrar_ayudas_endpoint(
         )  
         
         
-@router.put("/ayudas/{ayuda_id}", response_model=AyudaResponse, status_code=status.HTTP_200_OK)
+@router.put("/editar-ayuda/{ayuda_id}", response_model=AyudaResponse, status_code=status.HTTP_200_OK)
 async def update_ayuda_endpoint(
     ayuda_id: int, ayuda: AyudaCreate, db: AsyncSession = Depends(get_db_anserma)
 ):
@@ -71,7 +71,7 @@ async def update_ayuda_endpoint(
         )
 
 
-@router.delete("/ayudas/{ayuda_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/eliminar/{ayuda_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_ayuda_endpoint(ayuda_id: int, db: AsyncSession = Depends(get_db_anserma)):
     try:
         deleted = await delete_ayuda(db, ayuda_id)
