@@ -71,7 +71,7 @@ async def update_ayuda_endpoint(
         )
 
 
-@router.delete("/eliminar/{ayuda_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/eliminar-ayuda/{ayuda_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_ayuda_endpoint(ayuda_id: int, db: AsyncSession = Depends(get_db_anserma)):
     try:
         deleted = await delete_ayuda(db, ayuda_id)
