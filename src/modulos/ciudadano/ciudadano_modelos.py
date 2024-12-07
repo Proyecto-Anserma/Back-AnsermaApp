@@ -4,6 +4,12 @@ from pydantic import BaseModel, field_serializer
 from datetime import date
 from typing import Any, Optional
 
+from src.modulos.ubicacion.ubicacion_modelos import Ubicacion
+from src.modulos.pertenencia_etnica.pertenencia_etnica_modelos import PertenenciaEtnica
+from src.modulos.genero.genero_modelos import Genero
+
+
+
 class CiudadanoBase(BaseModel):
     numero_identificacion_ciudadano: str
     nombre_ciudadano: str
@@ -16,24 +22,18 @@ class CiudadanoBase(BaseModel):
     id_genero_ciudadano: int
 
 class CiudadanoCreate(CiudadanoBase):
-    geolocalizacion: str
+    pass
 
-class CiudadanoUpdate(CiudadanoBase):
-    geolocalizacion: str
-
-class CiudadanoResponse(CiudadanoBase):
-    geolocalizacion: Any
-
-    @field_serializer('geolocalizacion')
-    def serialize_geometry(self, geom: Any) -> str:
-        if isinstance(geom, WKBElement):
-            return f"SRID=4326;{to_shape(geom).wkt}"
-        return str(geom)
+class Ciudadano(CiudadanoBase):
+    numero_identificacion_ciudadano: int
+    genero: Genero
+    pertenencia_etnica: PertenenciaEtnica
+    ubicacion: Ubicacion
 
     class Config:
-        from_attributes = True
-        arbitrary_types_allowed = True
+        orm_mode = True
 
+## ---------------------------------------------------------------
 
 class CiudadanosFiltrar(BaseModel):
     numero_identificacion_ciudadano: Optional[str] = None

@@ -5,7 +5,8 @@ from geoalchemy2 import WKTElement
 from geoalchemy2.elements import WKTElement
 from shapely import wkt
 from .ciudadano_db_modelo import Ciudadano
-from .ciudadano_modelos import CiudadanoUpdate, CiudadanosFiltrar
+from .ciudadano_modelos import  CiudadanosFiltrar
+from sqlalchemy.orm import selectinload
 
 async def get_ciudadanos(db: AsyncSession):
     result = await db.execute(select(Ciudadano))
@@ -22,33 +23,33 @@ async def create_ciudadano(db: AsyncSession, ciudadano_data: dict):
         await db.rollback()
         raise Exception(f"Error al crear ciudadano: {str(e)}")
 
-async def update_ciudadano(db: AsyncSession, ciudadano_id: str, ciudadano_data: CiudadanoUpdate):
-    try:
-        geom_str = ciudadano_data.geolocalizacion
+# async def update_ciudadano(db: AsyncSession, ciudadano_id: str, ciudadano_data: CiudadanoUpdate):
+#     try:
+#         geom_str = ciudadano_data.geolocalizacion
         
-        if geom_str.startswith('SRID='):
-            srid = int(geom_str.split(';')[0].replace('SRID=', ''))
-            wkt_str = geom_str.split(';')[1]
-        else:
-            srid = 4326
-            wkt_str = geom_str
+#         if geom_str.startswith('SRID='):
+#             srid = int(geom_str.split(';')[0].replace('SRID=', ''))
+#             wkt_str = geom_str.split(';')[1]
+#         else:
+#             srid = 4326
+#             wkt_str = geom_str
 
-        update_data = ciudadano_data.model_dump()  
-        update_data['geolocalizacion'] = WKTElement(wkt_str, srid=srid) 
-        update_data['telefono_ciudadano'] = int(update_data['telefono_ciudadano'])
-        result = await db.execute(
-            sql_update(Ciudadano)
-            .where(Ciudadano.numero_identificacion_ciudadano == ciudadano_id)
-            .values(**update_data)
-            .returning(Ciudadano)
-        )
-        await db.commit()
-        updated_ciudadano = result.scalar_one_or_none()
-        return updated_ciudadano
+#         update_data = ciudadano_data.model_dump()  
+#         update_data['geolocalizacion'] = WKTElement(wkt_str, srid=srid) 
+#         update_data['telefono_ciudadano'] = int(update_data['telefono_ciudadano'])
+#         result = await db.execute(
+#             sql_update(Ciudadano)
+#             .where(Ciudadano.numero_identificacion_ciudadano == ciudadano_id)
+#             .values(**update_data)
+#             .returning(Ciudadano)
+#         )
+#         await db.commit()
+#         updated_ciudadano = result.scalar_one_or_none()
+#         return updated_ciudadano
 
-    except Exception as e:
-        await db.rollback()
-        raise Exception(f"Error al actualizar ciudadano: {str(e)}")
+#     except Exception as e:
+#         await db.rollback()
+#         raise Exception(f"Error al actualizar ciudadano: {str(e)}")
 
 
 async def delete_ciudadano(db: AsyncSession, ciudadano_id: str):
@@ -77,7 +78,12 @@ async def filtrar_ciudadanos(
     """
     try:
         # Construcción inicial de la consulta
-        query = select(Ciudadano)
+        query = (
+            select(Ciudadano)
+            .options(selectinload(Ciudadano.genero)) 
+            .options(selectinload(Ciudadano.pertenencia_etnica)) 
+            .options(selectinload(Ciudadano.ubicacion)) 
+        )
         
         # Agrega condiciones dinámicamente basadas en los filtros
         if filtros.numero_identificacion_ciudadano:
