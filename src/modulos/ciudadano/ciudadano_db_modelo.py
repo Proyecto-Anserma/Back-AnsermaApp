@@ -18,5 +18,9 @@ class Ciudadano(BaseAnserma):
 
     # Relaciones para cargar automáticamente los valores de las tablas de referencia
     genero = relationship("Genero", back_populates="ciudadanos")
+    pertenencia_etnica = relationship("PertenenciaEtnica", back_populates="ciudadanos")
+    ubicacion = relationship("Ubicacion", back_populates="ciudadanos")
+
+
 
 

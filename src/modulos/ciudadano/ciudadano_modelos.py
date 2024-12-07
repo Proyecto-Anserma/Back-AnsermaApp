@@ -4,6 +4,8 @@ from pydantic import BaseModel, field_serializer
 from datetime import date
 from typing import Any, Optional
 
+from src.modulos.ubicacion.ubicacion_modelos import Ubicacion
+from src.modulos.pertenencia_etnica.pertenencia_etnica_modelos import PertenenciaEtnica
 from src.modulos.genero.genero_modelos import Genero
 
 
@@ -25,6 +27,8 @@ class CiudadanoCreate(CiudadanoBase):
 class Ciudadano(CiudadanoBase):
     numero_identificacion_ciudadano: int
     genero: Genero
+    pertenencia_etnica: PertenenciaEtnica
+    ubicacion: Ubicacion
 
     class Config:
         orm_mode = True

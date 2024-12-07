@@ -19,6 +19,12 @@ BaseUsuarios = declarative_base()
 
 from src.modulos.ciudadano.ciudadano_db_modelo import Ciudadano
 from src.modulos.genero.genero_db_modelo import Genero
+from src.modulos.pertenencia_etnica.pertenencia_etnica_db_modelo import PertenenciaEtnica
+from src.modulos.ubicacion.ubicacion_db_modelo import Ubicacion
+from src.modulos.tipo_ubicacion.tipo_ubicacion_db_modelo import TipoUbicacion
+
+
+
 
 # Funciones para obtener sesiones de las bases de datos
 async def get_db_anserma():

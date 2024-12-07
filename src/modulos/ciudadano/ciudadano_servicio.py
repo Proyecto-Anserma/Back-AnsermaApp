@@ -80,7 +80,9 @@ async def filtrar_ciudadanos(
         # Construcción inicial de la consulta
         query = (
             select(Ciudadano)
-            .options(selectinload(Ciudadano.genero))  # Carga la relación anticipadamente
+            .options(selectinload(Ciudadano.genero)) 
+            .options(selectinload(Ciudadano.pertenencia_etnica)) 
+            .options(selectinload(Ciudadano.ubicacion)) 
         )
         
         # Agrega condiciones dinámicamente basadas en los filtros
