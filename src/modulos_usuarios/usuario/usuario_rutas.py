@@ -2,8 +2,8 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.db_config import get_db_usuarios
-from .usuario_modelos import UsuarioCreate, UsuarioResponse, UsuarioUpdate
-from .usuario_servicio import get_usuarios, create_usuario, update_usuario, delete_usuario
+from src.modulos_usuarios.usuario.usuario_modelos import UsuarioCreate, UsuarioResponse, UsuarioUpdate
+from src.modulos_usuarios.usuario.usuario_servicio import get_usuarios, create_usuario, update_usuario, delete_usuario
 
 router = APIRouter()
 

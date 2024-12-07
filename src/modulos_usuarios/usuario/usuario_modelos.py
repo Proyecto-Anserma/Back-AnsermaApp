@@ -21,6 +21,13 @@ class UsuarioCreate(UsuarioBase):
     pass  
 
 
+class Usurio(UsuarioBase):
+    numero_identificacion_usuario: int
+
+    class Config:
+        orm_mode = True
+
+
 class UsuarioUpdate(BaseModel):
     """Modelo para actualizar un usuario (todos los campos opcionales)."""
     numero_identificacion_usuario: str = Field(..., max_length=50)
@@ -44,3 +51,6 @@ class UsuarioResponse(UsuarioBase):
 
     class Config:
         orm_mode = True
+
+
+

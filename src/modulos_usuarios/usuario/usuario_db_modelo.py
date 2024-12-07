@@ -16,7 +16,3 @@ class Usuario(BaseUsuarios):
     id_ubicacion_usuario = Column(Integer, ForeignKey("ubicacion.id_ubicacion"), nullable=False)
     id_rol_usuario = Column(Integer, ForeignKey("rol.id_rol"), nullable=False)
 
-    ubicacion = relationship("Ubicacion")
-    pertenencia_etnica = relationship("PertenenciaEtnica")
-    genero = relationship("Genero")
-    rol = relationship("Rol")

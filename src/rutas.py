@@ -7,8 +7,9 @@ from src.modulos.ayuda.ayuda_rutas import router as ayuda_router
 from src.modulos.cantidad_origen_ayuda.cantidad_origen_ayuda_rutas import router as cantidad_origen_ayuda_router
 from src.modulos.referencias.referencias_rutas import router as referencias_router
 from src.modulos.ubicacion.ubicacion_rutas import router as ubicacion_router
-from src.modulos.usuario.usuario_rutas import router as usuario_router
 from src.modulos.estado_solicitud.estado_solicitud_rutas import router as estado_solicitud_router
+from src.modulos_usuarios.usuario.usuario_rutas import router as usuario_router
+
 
 router = APIRouter()
 
