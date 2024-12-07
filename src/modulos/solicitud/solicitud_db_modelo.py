@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer, String, Date, ForeignKey
 from geoalchemy2 import Geometry
 from sqlalchemy.orm import relationship
-from src.modulos import Base
+from database.db_config import BaseAnserma 
 
-class Solicitud(Base):
+
+class Solicitud(BaseAnserma):
     __tablename__ = "solicitud"
     
     id_solicitud = Column(Integer, primary_key=True, autoincrement=True)
@@ -15,7 +16,4 @@ class Solicitud(Base):
     id_ubicacion_solicitud = Column(Integer, ForeignKey("ubicacion.id_ubicacion"), nullable=False)
     id_ciudadano_solicitud = Column(String, ForeignKey("ciudadano.numero_identificacion_ciudadano"), nullable=False)
 
-    # Relaciones para cargar automáticamente los valores de las tablas de referencia
-    tipo_solicitud = relationship("TipoSolicitud")
-    ubicacion = relationship("Ubicacion")
-    ciudadano = relationship("Ciudadano")
+   

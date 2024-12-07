@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Date, Text
-from src.modulos import Base
+from database.db_config import BaseAnserma 
 
-class Ayuda(Base):
+class Ayuda(BaseAnserma):
     __tablename__ = "ayuda"
 
     id_ayuda = Column(Integer, primary_key=True, index=True)
