@@ -58,6 +58,10 @@ async def update_solicitud(db: AsyncSession, solicitud_id: int, solicitud_data: 
         # Preparar los datos para la actualización
         update_data = solicitud_data.model_dump(exclude_unset=True)
 
+        # Asegurarse de que la geolocalización se incluya en los datos de actualización
+        if solicitud_data.geolocalizacion:
+            update_data['geolocalizacion'] = solicitud_data.geolocalizacion
+
         # Aplicar los cambios en la base de datos
         await db.execute(
             sql_update(Solicitud)
@@ -78,6 +82,7 @@ async def update_solicitud(db: AsyncSession, solicitud_id: int, solicitud_data: 
     except Exception as e:
         await db.rollback()
         raise Exception(f"Error al actualizar solicitud: {str(e)}")
+
 
 
 

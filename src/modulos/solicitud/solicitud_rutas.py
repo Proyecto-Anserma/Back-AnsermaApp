@@ -42,7 +42,7 @@ async def create_solicitud_endpoint(solicitud: SolicitudCreate, db: AsyncSession
 @router.put("/editar-solicitud/{solicitud_id}", response_model=SolicitudResponse)
 async def update_solicitud_endpoint(
     solicitud_id: int, 
-    solicitud: SolicitudBase, 
+    solicitud: SolicitudCreate,  # Cambiar a SolicitudCreate en lugar de SolicitudBase
     db: AsyncSession = Depends(get_db_anserma)
 ):
     try:
@@ -55,7 +55,6 @@ async def update_solicitud_endpoint(
             status_code=400,
             detail=f"Error al actualizar solicitud: {str(e)}"
         )
-
 
 '''Eliminar solicitud'''
 @router.delete("/eliminar-solicitud/{solicitud_id}", status_code=status.HTTP_204_NO_CONTENT)
