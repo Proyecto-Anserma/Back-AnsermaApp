@@ -1,4 +1,4 @@
-from ..modelos.ciudadano import Ciudadano
+from .ciudadano_db_modelo import Ciudadano
 from datetime import date
 
 def consultar_ciudadanos(cedula: str):
