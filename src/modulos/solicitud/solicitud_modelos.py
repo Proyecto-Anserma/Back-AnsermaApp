@@ -5,7 +5,7 @@ from datetime import date
 from typing import Any, Optional
 
 class SolicitudBase(BaseModel):
-    id_solicitud: int
+    id_solicitud: Optional[int] = None  # Campo opcional con valor por defecto None
     descripcion_solicitud: str
     fecha_creacion_solicitud: date
     id_tipo_solicitud: int

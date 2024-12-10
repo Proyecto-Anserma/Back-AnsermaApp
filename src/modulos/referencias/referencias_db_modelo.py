@@ -1,12 +1,14 @@
 from sqlalchemy import Column, Integer, String, Date
 from src.modulos import Base
+from database.db_config import BaseAnserma 
+
 
 class TipoUbicacion(Base):
     __tablename__ = "tipo_ubicacion"
     id_tipo_ubicacion = Column(Integer, primary_key=True, autoincrement=True)
     descripcion_tipo_ubicacion = Column(String, nullable=True)
 
-class TipoSolicitud(Base):
+class TipoSolicitud(BaseAnserma):
     __tablename__ = "tipo_solicitud"
     id_tipo_solicitud = Column(Integer, primary_key=True, autoincrement=True)
     descripcion_tipo_solicitud = Column(String, nullable=True)

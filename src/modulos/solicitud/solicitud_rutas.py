@@ -30,6 +30,7 @@ async def filtrar_solicitudes_endpoint(
 @router.post("/crear-solicitud/", response_model=SolicitudResponse, status_code=status.HTTP_201_CREATED)
 async def create_solicitud_endpoint(solicitud: SolicitudCreate, db: AsyncSession = Depends(get_db_anserma)):
     try:
+        solicitud.fecha_creacion_solicitud = date.today()
         solicitud_dict = solicitud.model_dump()
         nueva_solicitud = await create_solicitud(db, solicitud_dict)
         return nueva_solicitud
