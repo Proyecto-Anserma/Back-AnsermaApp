@@ -9,7 +9,6 @@ from src.modulos.pertenencia_etnica.pertenencia_etnica_modelos import Pertenenci
 from src.modulos.genero.genero_modelos import Genero
 
 
-
 class CiudadanoBase(BaseModel):
     numero_identificacion_ciudadano: str
     nombre_ciudadano: str
