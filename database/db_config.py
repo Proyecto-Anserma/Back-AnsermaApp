@@ -23,6 +23,7 @@ from src.modulos.pertenencia_etnica.pertenencia_etnica_db_modelo import Pertenen
 from src.modulos.ubicacion.ubicacion_db_modelo import Ubicacion
 from src.modulos.tipo_ubicacion.tipo_ubicacion_db_modelo import TipoUbicacion
 from src.modulos.ayuda.ayuda_db_modelo import Ayuda
+from src.modulos.tipo_solicitud.tipo_solicitud_db_modelo import TipoSolicitud
 from src.modulos.solicitud.solicitud_db_modelo import Solicitud
 
 

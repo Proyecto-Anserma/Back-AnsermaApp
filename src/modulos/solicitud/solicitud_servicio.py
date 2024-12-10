@@ -3,6 +3,7 @@ from sqlalchemy.future import select
 from sqlalchemy import text, select, update as sql_update, delete as sql_delete
 from .solicitud_db_modelo import Solicitud
 from .solicitud_modelos import *
+from sqlalchemy.orm import selectinload
 
 async def filtrar_solicitudes(
     db: AsyncSession, 
@@ -14,7 +15,11 @@ async def filtrar_solicitudes(
     """
     try:
         # Construcción inicial de la consulta
-        query = select(Solicitud)
+        query = (
+            select(Solicitud)
+            .options(selectinload(Solicitud.tipo_solicitud)) 
+        )
+        
         
         # Agrega condiciones dinámicamente basadas en los filtros
         if filtros.descripcion_solicitud:
