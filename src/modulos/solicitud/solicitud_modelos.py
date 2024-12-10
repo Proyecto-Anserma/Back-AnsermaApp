@@ -7,7 +7,7 @@ from typing import Any, Optional
 class SolicitudBase(BaseModel):
     id_solicitud: Optional[int] = None  # Campo opcional con valor por defecto None
     descripcion_solicitud: str
-    fecha_creacion_solicitud: date
+    fecha_creacion_solicitud: Optional[date] = date.today()
     id_tipo_solicitud: int
     id_ubicacion_solicitud: int
     id_ciudadano_solicitud: str
