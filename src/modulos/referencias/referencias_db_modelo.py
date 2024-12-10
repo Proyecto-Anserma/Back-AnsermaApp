@@ -8,7 +8,7 @@ class TipoUbicacion(Base):
     id_tipo_ubicacion = Column(Integer, primary_key=True, autoincrement=True)
     descripcion_tipo_ubicacion = Column(String, nullable=True)
 
-class TipoSolicitud(BaseAnserma):
+class TipoSolicitud(Base):
     __tablename__ = "tipo_solicitud"
     id_tipo_solicitud = Column(Integer, primary_key=True, autoincrement=True)
     descripcion_tipo_solicitud = Column(String, nullable=True)

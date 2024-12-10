@@ -17,3 +17,4 @@ class Solicitud(BaseAnserma):
     id_ciudadano_solicitud = Column(String, ForeignKey("ciudadano.numero_identificacion_ciudadano"), nullable=False)
 
    
+    tipo_solicitud = relationship("TipoSolicitud", back_populates="solicitudes")

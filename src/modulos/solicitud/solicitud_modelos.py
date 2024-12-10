@@ -4,6 +4,8 @@ from pydantic import BaseModel, field_serializer
 from datetime import date
 from typing import Any, Optional
 
+from src.modulos.tipo_solicitud.tipo_solicitud_modelos import TipoSolicitudBase
+
 class SolicitudBase(BaseModel):
     id_solicitud: Optional[int] = None  # Campo opcional con valor por defecto None
     descripcion_solicitud: str
@@ -22,6 +24,7 @@ class SolicitudCreate(SolicitudBase):
 
 class SolicitudResponse(SolicitudBase):
     geolocalizacion: Any
+    tipo_solicitud: TipoSolicitudBase
 
     @field_serializer('geolocalizacion')
     def serialize_geometry(self, geom: Any) -> str:
@@ -30,5 +33,4 @@ class SolicitudResponse(SolicitudBase):
         return str(geom)
 
     class Config:
-        from_attributes = True
-        arbitrary_types_allowed = True
+        orm_mode = True
