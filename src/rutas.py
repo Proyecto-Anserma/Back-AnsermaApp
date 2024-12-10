@@ -10,6 +10,8 @@ from src.modulos.ubicacion.ubicacion_rutas import router as ubicacion_router
 from src.modulos.estado_solicitud.estado_solicitud_rutas import router as estado_solicitud_router
 from src.modulos_usuarios.usuario.usuario_rutas import router as usuario_router
 
+from src.modulos.tipo_solicitud.tipo_solicitud_rutas import router as tipo_solicitud_router
+
 
 router = APIRouter()
 
@@ -24,6 +26,9 @@ router.include_router(cantidad_origen_ayuda_router, prefix="/cantidades_origen_a
 router.include_router(ubicacion_router, prefix="/ubicaciones", tags=["ubicaciones"])
 router.include_router(usuario_router, prefix="/usuarios", tags=["usuarios"])
 router.include_router(referencias_router, prefix="/referencias", tags=["referencias"])
+
+router.include_router(tipo_solicitud_router, prefix="/tipo_solicitud", tags=["tipo_solicitud"])
+
 
 def include_routes(app):
     app.include_router(router)
