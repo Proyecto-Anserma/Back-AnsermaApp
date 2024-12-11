@@ -5,6 +5,9 @@ from datetime import date
 from typing import Any, Optional
 
 from src.modulos.tipo_solicitud.tipo_solicitud_modelos import TipoSolicitudBase
+from src.modulos.ubicacion.ubicacion_modelos import Ubicacion
+
+
 
 class SolicitudBase(BaseModel):
     id_solicitud: Optional[int] = None  # Campo opcional con valor por defecto None
@@ -24,7 +27,9 @@ class SolicitudCreate(SolicitudBase):
 
 class SolicitudResponse(SolicitudBase):
     geolocalizacion: Any
-    tipo_solicitud: TipoSolicitudBase
+    tipo_solicitud: Optional[TipoSolicitudBase] = None
+    ubicacion: Optional[Ubicacion] = None
+
 
     @field_serializer('geolocalizacion')
     def serialize_geometry(self, geom: Any) -> str:
@@ -34,3 +39,4 @@ class SolicitudResponse(SolicitudBase):
 
     class Config:
         orm_mode = True
+        arbitrary_types_allowed = True

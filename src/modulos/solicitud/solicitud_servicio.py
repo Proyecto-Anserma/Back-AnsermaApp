@@ -18,6 +18,8 @@ async def filtrar_solicitudes(
         query = (
             select(Solicitud)
             .options(selectinload(Solicitud.tipo_solicitud)) 
+            .options(selectinload(Solicitud.ubicacion)) 
+
         )
         
         
@@ -37,6 +39,9 @@ async def filtrar_solicitudes(
         raise Exception(f"Error al filtrar solicitudes: {str(e)}")
 
 
+from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
+
 async def create_solicitud(db: AsyncSession, solicitud_data: dict):
     try:
         nueva_solicitud = Solicitud(**solicitud_data)
@@ -46,6 +51,15 @@ async def create_solicitud(db: AsyncSession, solicitud_data: dict):
             text("SELECT setval('solicitud_id_solicitud_seq', (SELECT MAX(id_solicitud) FROM solicitud))")
         )
         await db.refresh(nueva_solicitud)
+        
+        # Pre-cargar relaciones si es necesario
+        result = await db.execute(
+            select(Solicitud)
+            .options(selectinload(Solicitud.tipo_solicitud))
+            .filter(Solicitud.id_solicitud == nueva_solicitud.id_solicitud)
+        )
+        nueva_solicitud = result.scalar_one()
+        
         return nueva_solicitud
     except Exception as e:
         await db.rollback()

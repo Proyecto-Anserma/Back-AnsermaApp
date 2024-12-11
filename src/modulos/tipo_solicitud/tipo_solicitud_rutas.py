@@ -5,12 +5,12 @@ from geoalchemy2.elements import WKTElement
 from typing import List
 from shapely import wkt
 from database.db_config import get_db_anserma
-from .tipo_solicitud_modelos import PertenenciaEtnica
+from .tipo_solicitud_modelos import TipoSolicitudResponse
 from .tipo_solicitud_servicio import *
 
 router = APIRouter()
 
-@router.get("/obtener_todos/", response_model=List[PertenenciaEtnica])
+@router.get("/obtener_todos/", response_model=List[TipoSolicitudResponse])
 async def obtener_todos(db: AsyncSession = Depends(get_db_anserma)):
     try:
         tipo_solicitudes = await get_tipo_solicitud(db)

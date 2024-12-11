@@ -7,7 +7,7 @@ from database.db_config import get_db_anserma
 
 router = APIRouter()
 
-@router.get("/ubicaciones/", response_model=List[UbicacionBase])
+@router.get("/obtener_todos/", response_model=List[UbicacionBase])
 async def read_ubicaciones(db: AsyncSession = Depends(get_db_anserma)):
     """
     Obtiene todas las ubicaciones.

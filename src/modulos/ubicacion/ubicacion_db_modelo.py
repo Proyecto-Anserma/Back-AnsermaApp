@@ -11,6 +11,7 @@ class Ubicacion(BaseAnserma):
 
 
     ciudadanos = relationship("Ciudadano", back_populates="ubicacion")
+    solicitudes = relationship("Solicitud", back_populates="ubicacion")
 
     
     tipo_ubicacion = relationship("TipoUbicacion", back_populates="ubicaciones")

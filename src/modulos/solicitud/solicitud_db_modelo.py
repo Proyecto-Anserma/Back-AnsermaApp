@@ -18,3 +18,4 @@ class Solicitud(BaseAnserma):
 
    
     tipo_solicitud = relationship("TipoSolicitud", back_populates="solicitudes")
+    ubicacion = relationship("Ubicacion", back_populates="solicitudes")
