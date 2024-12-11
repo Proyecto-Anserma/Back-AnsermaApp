@@ -10,7 +10,7 @@ class UbicacionBase(BaseModel):
 class UbicacionCreate(UbicacionBase):
     pass
 
-class Ubicacion(UbicacionBase):
+class UbicacionResponse(UbicacionBase):
     id_ubicacion: int
 
     class Config:

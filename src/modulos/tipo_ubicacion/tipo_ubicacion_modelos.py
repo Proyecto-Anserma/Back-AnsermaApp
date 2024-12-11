@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
-
 class TipoUbicacionBase(BaseModel):
     id_tipo_ubicacion: int
     descripcion_tipo_ubicacion: str

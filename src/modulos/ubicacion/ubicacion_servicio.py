@@ -2,14 +2,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import text, update as sql_update, delete as sql_delete
 from .ubicacion_db_modelo import Ubicacion
-from .ubicacion_modelos import UbicacionCreate, UbicacionUpdate
+from .ubicacion_modelos import UbicacionCreate, UbicacionUpdate, UbicacionResponse
 
 async def get_ubicaciones(db: AsyncSession):
     """
     Obtiene todas las ubicaciones de la base de datos.
     """
     try:
-        result = await db.execute(select(Ubicacion))
+        result = await db.execute(select(UbicacionResponse))
         return result.scalars().all()
     except Exception as e:
         raise Exception(f"Error al obtener ubicaciones: {str(e)}")

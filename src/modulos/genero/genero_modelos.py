@@ -8,7 +8,7 @@ class GeneroBase(BaseModel):
 class GeneroCreate(GeneroBase):
     pass
 
-class Genero(GeneroBase):
+class GeneroResponse(GeneroBase):
     id_genero: int
 
     class Config:

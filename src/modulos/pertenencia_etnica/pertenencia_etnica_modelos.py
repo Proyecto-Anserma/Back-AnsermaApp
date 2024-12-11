@@ -8,7 +8,7 @@ class PertenenciaEtnicaBase(BaseModel):
 class PertenenciaEtnicaCreate(PertenenciaEtnicaBase):
     pass
 
-class PertenenciaEtnica(PertenenciaEtnicaBase):
+class PertenenciaEtnicaResponse(PertenenciaEtnicaBase):
     id_pertenencia_etnica: int
 
     class Config:

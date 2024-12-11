@@ -5,10 +5,10 @@ class TipoSolicitudBase(BaseModel):
     id_tipo_solicitud: int
     descripcion_tipo_solicitud: str
 
-class PertenenciaEtnicaCreate(TipoSolicitudBase):
+class TipoSolicitudCreate(TipoSolicitudBase):
     pass
 
-class PertenenciaEtnica(TipoSolicitudBase):
+class TipoSolicitudResponse(TipoSolicitudBase):
     id_tipo_solicitud: int
 
     class Config:
