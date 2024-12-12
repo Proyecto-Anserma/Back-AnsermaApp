@@ -11,7 +11,7 @@ class Ciudadano(BaseAnserma):
     apellido_ciudadano = Column(String, nullable=False)
     fecha_nacimiento_ciudadano = Column(Date, nullable=False)
     correo_electronico_ciudadano = Column(String, unique=True, nullable=False)
-    telefono_ciudadano = Column(Integer, nullable=True)
+    telefono_ciudadano = Column(String, nullable=False)
     geolocalizacion = Column(Geometry(geometry_type='POINT', srid=4326), nullable=True)
     id_ubicacion_ciudadano = Column(Integer, ForeignKey("ubicacion.id_ubicacion"), nullable=False)
     id_pertenencia_etnica_ciudadano = Column(Integer, ForeignKey("pertenencia_etnica.id_pertenencia_etnica"), nullable=False)

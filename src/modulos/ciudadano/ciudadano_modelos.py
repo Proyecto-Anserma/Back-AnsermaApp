@@ -16,7 +16,7 @@ class CiudadanoBase(BaseModel):
     apellido_ciudadano: str
     fecha_nacimiento_ciudadano: date
     correo_electronico_ciudadano: str
-    telefono_ciudadano: int
+    telefono_ciudadano: str
     id_ubicacion_ciudadano: int
     id_pertenencia_etnica_ciudadano: int
     id_genero_ciudadano: int

@@ -32,7 +32,7 @@ async def read_ciudadanos(db: AsyncSession = Depends(get_db_anserma)):
 async def create_ciudadano_endpoint(ciudadano: CiudadanoCreate, db: AsyncSession = Depends(get_db_anserma)):
     try:
         ciudadano_dict = ciudadano.model_dump()
-        ciudadano_dict['telefono_ciudadano'] = int(ciudadano_dict['telefono_ciudadano'])
+        ciudadano_dict['telefono_ciudadano'] = str(ciudadano_dict['telefono_ciudadano'])
         nuevo_ciudadano = await create_ciudadano(db, ciudadano_dict)
         return nuevo_ciudadano
         
