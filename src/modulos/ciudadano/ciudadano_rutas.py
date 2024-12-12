@@ -9,7 +9,7 @@ from database.db_config import get_db_anserma
 from .ciudadano_servicio import (
     get_ciudadanos,
     create_ciudadano,
-    
+    update_ciudadano,
     delete_ciudadano,
     filtrar_ciudadanos
 )
@@ -43,22 +43,22 @@ async def create_ciudadano_endpoint(ciudadano: CiudadanoCreate, db: AsyncSession
         )
         
         
-# @router.put("/ciudadanos/{ciudadano_id}", response_model=Ciudadano)
-# async def update_ciudadano_endpoint(
-#     ciudadano_id: str, 
-#     ciudadano: CiudadanoUpdate, 
-#     db: AsyncSession = Depends(get_db_anserma)
-# ):
-#     try:
-#         updated_ciudadano = await update_ciudadano(db, ciudadano_id, ciudadano)
-#         if not updated_ciudadano:
-#             raise HTTPException(status_code=404, detail="Ciudadano no encontrado")
-#         return updated_ciudadano
-#     except Exception as e:
-#         raise HTTPException(
-#             status_code=400,
-#             detail=f"Error al actualizar ciudadano: {str(e)}"
-#         )
+@router.put("/editar-ciudadano/{ciudadano_id}", response_model=None)
+async def update_ciudadano_endpoint(
+    ciudadano_id: str, 
+    ciudadano: CiudadanoCreate,  # Cambiar a SolicitudCreate en lugar de SolicitudBase
+    db: AsyncSession = Depends(get_db_anserma)
+):
+    try:
+        updated_ciudadano = await update_ciudadano(db, ciudadano_id, ciudadano)
+        if not updated_ciudadano:
+            raise HTTPException(status_code=404, detail="Ciudadano no encontrado")
+        return updated_ciudadano
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error al actualizar solicitud: {str(e)}"
+        )
         
 
 @router.delete("/ciudadanos/{ciudadano_id}", status_code=status.HTTP_204_NO_CONTENT)

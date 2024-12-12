@@ -22,17 +22,42 @@ class CiudadanoBase(BaseModel):
     id_genero_ciudadano: int
 
 class CiudadanoCreate(CiudadanoBase):
-    pass
+    geolocalizacion: str
 
 class Ciudadano(CiudadanoBase):
-    numero_identificacion_ciudadano: int
+    geolocalizacion: Any
+    numero_identificacion_ciudadano: str
     genero: Genero
     pertenencia_etnica: PertenenciaEtnica
     ubicacion: Ubicacion
 
+    @field_serializer('geolocalizacion')
+    def serialize_geometry(self, geom: Any) -> str:
+        if isinstance(geom, WKBElement):
+            return f"SRID=4326;{to_shape(geom).wkt}"
+        return str(geom)
+
     class Config:
         orm_mode = True
+        arbitrary_types_allowed = True
+## ---------------------------------------------------------------
 
+class CiudadanoResponse(CiudadanoBase):
+    geolocalizacion: Any
+    numero_identificacion_ciudadano: str
+    genero:   Optional[Genero] = None
+    pertenencia_etnica: Optional[PertenenciaEtnica] = None
+    ubicacion: Optional[Ubicacion] = None
+
+    @field_serializer('geolocalizacion')
+    def serialize_geometry(self, geom: Any) -> str:
+        if isinstance(geom, WKBElement):
+            return f"SRID=4326;{to_shape(geom).wkt}"
+        return str(geom)
+
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
 ## ---------------------------------------------------------------
 
 class CiudadanosFiltrar(BaseModel):

@@ -12,6 +12,9 @@ from src.modulos_usuarios.usuario.usuario_rutas import router as usuario_router
 
 from src.modulos.tipo_solicitud.tipo_solicitud_rutas import router as tipo_solicitud_router
 
+from src.modulos.pertenencia_etnica.pertenencia_etnica_rutas import router as pertenencia_etnica_router
+
+
 
 router = APIRouter()
 
@@ -28,6 +31,8 @@ router.include_router(usuario_router, prefix="/usuarios", tags=["usuarios"])
 router.include_router(referencias_router, prefix="/referencias", tags=["referencias"])
 
 router.include_router(tipo_solicitud_router, prefix="/tipo_solicitud", tags=["tipo_solicitud"])
+router.include_router(pertenencia_etnica_router, prefix="/pertenencia_etnica", tags=["pertenencia_etnica"])
+
 
 
 def include_routes(app):
