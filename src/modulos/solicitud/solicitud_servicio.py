@@ -56,6 +56,7 @@ async def create_solicitud(db: AsyncSession, solicitud_data: dict):
         result = await db.execute(
             select(Solicitud)
             .options(selectinload(Solicitud.tipo_solicitud))
+            .options(selectinload(Solicitud.ubicacion))  
             .filter(Solicitud.id_solicitud == nueva_solicitud.id_solicitud)
         )
         nueva_solicitud = result.scalar_one()
