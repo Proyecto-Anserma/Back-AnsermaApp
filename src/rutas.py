@@ -13,6 +13,8 @@ from src.modulos.tipo_solicitud.tipo_solicitud_rutas import router as tipo_solic
 from src.modulos.pertenencia_etnica.pertenencia_etnica_rutas import router as pertenencia_etnica_router
 
 from src.modulos.genero.genero_rutas import router as genero_router
+from src.auth import auth_rutas
+
 
 
 
@@ -36,7 +38,7 @@ router.include_router(pertenencia_etnica_router, prefix="/pertenencia_etnica", t
 
 router.include_router(genero_router, prefix="/genero", tags=["genero"])
 
-
+router.include_router(auth_rutas.router, tags=["authentication"])
 
 def include_routes(app):
     app.include_router(router)
