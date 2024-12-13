@@ -14,6 +14,7 @@ class UsuarioBase(BaseModel):
     id_pertenencia_etnica_usuario: int
     id_ubicacion_usuario: int
     id_rol_usuario: int
+    contrasena_usuario: str = Field(..., min_length=8, max_length=255)
 
 
 class UsuarioCreate(UsuarioBase):
@@ -40,6 +41,7 @@ class UsuarioUpdate(BaseModel):
     id_pertenencia_etnica_usuario: Optional[int]
     id_ubicacion_usuario: Optional[int]
     id_rol_usuario: Optional[int]
+    contrasena_usuario: Optional[str] = Field(None, min_length=8, max_length=255)
 
 
 class UsuarioResponse(UsuarioBase):
@@ -51,6 +53,7 @@ class UsuarioResponse(UsuarioBase):
 
     class Config:
         orm_mode = True
+        exclude = {'contrasena_usuario'}
 
 
 

@@ -15,4 +15,5 @@ class Usuario(BaseUsuarios):
     id_pertenencia_etnica_usuario = Column(Integer, ForeignKey("pertenencia_etnica.id_pertenencia_etnica"), nullable=False)
     id_ubicacion_usuario = Column(Integer, ForeignKey("ubicacion.id_ubicacion"), nullable=False)
     id_rol_usuario = Column(Integer, ForeignKey("rol.id_rol"), nullable=False)
+    contrasena_usuario = Column(String(255), nullable=False)
 
