@@ -3,6 +3,7 @@ from sqlalchemy.future import select
 from sqlalchemy import text, update as sql_update, delete as sql_delete
 from .usuario_db_modelo import Usuario
 from .usuario_modelos import UsuarioUpdate
+from src.auth.auth_utils import get_password_hash
 
 async def get_usuarios(db: AsyncSession):
     try:
@@ -14,14 +15,17 @@ async def get_usuarios(db: AsyncSession):
 
 async def create_usuario(db: AsyncSession, usuario_data: dict):
     try:
+        # Verificar si la contraseña está presente
+        if 'contrasena_usuario' not in usuario_data:
+            raise ValueError("La contraseña es requerida")
+
+        # Hash de la contraseña
+        password_plain = usuario_data['contrasena_usuario']
+        usuario_data['contrasena_usuario'] = get_password_hash(password_plain)
+        
         nuevo_usuario = Usuario(**usuario_data)
         db.add(nuevo_usuario)
         await db.commit()
-        
-        # Ajustamos el valor de la secuencia si es necesario (si estás usando secuencias en la base de datos)
-        await db.execute(
-            text("SELECT setval('usuario_numero_identificacion_usuario_seq', (SELECT MAX(numero_identificacion_usuario) FROM usuario))")
-        )
         await db.refresh(nuevo_usuario)
         return nuevo_usuario
     except Exception as e:
