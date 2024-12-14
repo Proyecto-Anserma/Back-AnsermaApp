@@ -1,14 +1,35 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import text, update as sql_update, delete as sql_delete
+from sqlalchemy.orm import selectinload, joinedload
 from .estado_solicitud_db_modelo import EstadoSolicitud
 from .estado_solicitud_modelos import EstadoSolicitudUpdate
+from src.modulos.solicitud.solicitud_db_modelo import Solicitud
 
 async def get_estado_solicitudes(db: AsyncSession):
     try:
-        result = await db.execute(select(EstadoSolicitud))
-        return result.scalars().all()
+        # Cargar todas las relaciones necesarias, incluyendo las relaciones anidadas
+        query = (
+            select(EstadoSolicitud)
+            .options(
+                joinedload(EstadoSolicitud.estado),
+                joinedload(EstadoSolicitud.solicitud).joinedload(Solicitud.tipo_solicitud),
+                joinedload(EstadoSolicitud.solicitud).joinedload(Solicitud.ubicacion)
+            )
+        )
+        
+        result = await db.execute(query)
+        estados_solicitud = result.unique().scalars().all()
+        
+        # Asegurarse de que todas las relaciones estén cargadas
+        for estado_solicitud in estados_solicitud:
+            if estado_solicitud.solicitud:
+                _ = estado_solicitud.solicitud.tipo_solicitud
+                _ = estado_solicitud.solicitud.ubicacion
+        
+        return estados_solicitud
     except Exception as e:
+        print(f"Error detallado: {str(e)}")  # Para debugging
         raise Exception(f"Error al obtener estados de solicitud: {str(e)}")
 
 async def create_estado_solicitud(db: AsyncSession, estado_solicitud_data: dict):
