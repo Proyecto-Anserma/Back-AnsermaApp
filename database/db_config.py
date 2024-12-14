@@ -26,6 +26,8 @@ from src.modulos.ayuda.ayuda_db_modelo import Ayuda
 from src.modulos.tipo_solicitud.tipo_solicitud_db_modelo import TipoSolicitud
 from src.modulos.solicitud.solicitud_db_modelo import Solicitud
 from src.modulos.solicitud_ayuda.solicitud_ayuda_db_modelo import SolicitudAyuda
+from src.modulos.estado.estado_db_modelo import Estado
+from src.modulos.estado_solicitud.estado_solicitud_db_modelo import EstadoSolicitud
 
 
 
