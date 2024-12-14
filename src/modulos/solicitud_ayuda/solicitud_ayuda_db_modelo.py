@@ -1,8 +1,9 @@
 from sqlalchemy import Column, Integer, ForeignKey, Date, Text
 from sqlalchemy.orm import relationship
-from src.modulos import Base
+from database.db_config import BaseAnserma 
 
-class SolicitudAyuda(Base):
+
+class SolicitudAyuda(BaseAnserma):
     __tablename__ = "solicitud_ayuda"
 
     id_solicitud_ayuda = Column(Integer, primary_key=True, index=True)
@@ -12,5 +13,4 @@ class SolicitudAyuda(Base):
     id_solicitud = Column(Integer, ForeignKey("solicitud.id_solicitud", ondelete="CASCADE"), nullable=False)
     id_ayuda = Column(Integer, ForeignKey("ayuda.id_ayuda", ondelete="CASCADE"), nullable=False)
 
-    solicitud = relationship("Solicitud")
-    ayuda = relationship("Ayuda")
+   
