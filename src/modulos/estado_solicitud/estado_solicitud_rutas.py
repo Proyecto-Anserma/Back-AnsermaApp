@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
-from .estado_solicitud_modelos import EstadoSolicitudCreate, EstadoSolicitudResponse, EstadoSolicitudUpdate
+from .estado_solicitud_modelos import EstadoSolicitudCreate, EstadoSolicitudResponse, EstadoSolicitudUpdate, EstadoSolicitudFiltro
 from database.db_config import get_db_anserma
 from .estado_solicitud_servicio import (
     get_estado_solicitudes,
     create_estado_solicitud,
     update_estado_solicitud,
     delete_estado_solicitud,
+    get_ultimo_estado_solicitud,
 )
 
 router = APIRouter()
@@ -65,4 +66,23 @@ async def delete_estado_solicitud_endpoint(estado_solicitud_id: int, db: AsyncSe
         raise HTTPException(
             status_code=400,
             detail=f"Error al eliminar estado de solicitud: {str(e)}"
+        )
+
+@router.post("/ultimo-estado-solicitud/", response_model=List[EstadoSolicitudResponse])
+async def get_ultimo_estado_solicitud_endpoint(
+    filtro: EstadoSolicitudFiltro,
+    db: AsyncSession = Depends(get_db_anserma)
+):
+    try:
+        ultimos_estados = await get_ultimo_estado_solicitud(db, filtro.id_solicitud)
+        if not ultimos_estados:
+            raise HTTPException(
+                status_code=404,
+                detail="No se encontraron estados de solicitud"
+            )
+        return ultimos_estados
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al obtener los últimos estados de solicitud: {str(e)}"
         )

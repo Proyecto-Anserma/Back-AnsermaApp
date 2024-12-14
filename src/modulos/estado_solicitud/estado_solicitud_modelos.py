@@ -34,3 +34,6 @@ class EstadoSolicitudResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class EstadoSolicitudFiltro(BaseModel):
+    id_solicitud: Optional[int] = None

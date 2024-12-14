@@ -5,6 +5,7 @@ from sqlalchemy.orm import selectinload, joinedload
 from .estado_solicitud_db_modelo import EstadoSolicitud
 from .estado_solicitud_modelos import EstadoSolicitudUpdate
 from src.modulos.solicitud.solicitud_db_modelo import Solicitud
+from typing import Optional
 
 async def get_estado_solicitudes(db: AsyncSession):
     try:
@@ -79,3 +80,42 @@ async def delete_estado_solicitud(db: AsyncSession, estado_solicitud_id: int):
     except Exception as e:
         await db.rollback()
         raise Exception(f"Error al eliminar estado de solicitud: {str(e)}")
+
+async def get_ultimo_estado_solicitud(db: AsyncSession, id_solicitud: Optional[int] = None):
+    try:
+        # Iniciar la consulta base
+        query = (
+            select(EstadoSolicitud)
+            .options(
+                joinedload(EstadoSolicitud.estado),
+                joinedload(EstadoSolicitud.solicitud).joinedload(Solicitud.tipo_solicitud),
+                joinedload(EstadoSolicitud.solicitud).joinedload(Solicitud.ubicacion)
+            )
+        )
+        
+        # Si se proporciona id_solicitud, filtrar por él
+        if id_solicitud is not None:
+            query = query.where(EstadoSolicitud.id_solicitud == id_solicitud)
+            
+        # Ordenar por id_solicitud y fecha para obtener los últimos estados
+        query = query.order_by(
+            EstadoSolicitud.id_solicitud,
+            EstadoSolicitud.fecha_cambio_estado_solicitud.desc()
+        )
+        
+        result = await db.execute(query)
+        estados = result.unique().scalars().all()
+        
+        # Filtrar para obtener solo el último estado de cada solicitud
+        ultimos_estados = {}
+        for estado in estados:
+            if estado.id_solicitud not in ultimos_estados:
+                ultimos_estados[estado.id_solicitud] = estado
+                if estado.solicitud:
+                    _ = estado.solicitud.tipo_solicitud
+                    _ = estado.solicitud.ubicacion
+        
+        return list(ultimos_estados.values())
+    except Exception as e:
+        print(f"Error detallado: {str(e)}")
+        raise Exception(f"Error al obtener el último estado de la solicitud: {str(e)}")
