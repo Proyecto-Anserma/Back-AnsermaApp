@@ -14,6 +14,7 @@ from src.modulos.pertenencia_etnica.pertenencia_etnica_rutas import router as pe
 
 from src.modulos.genero.genero_rutas import router as genero_router
 from src.auth import auth_rutas
+from src.modulos.estado.estado_rutas import router as estado_router
 
 
 
@@ -39,6 +40,8 @@ router.include_router(pertenencia_etnica_router, prefix="/pertenencia_etnica", t
 router.include_router(genero_router, prefix="/genero", tags=["genero"])
 
 router.include_router(auth_rutas.router, tags=["authentication"])
+
+router.include_router(estado_router, prefix="/api", tags=["Estados"])
 
 def include_routes(app):
     app.include_router(router)

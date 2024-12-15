@@ -6,6 +6,7 @@ from .estado_solicitud_db_modelo import EstadoSolicitud
 from .estado_solicitud_modelos import EstadoSolicitudUpdate
 from src.modulos.solicitud.solicitud_db_modelo import Solicitud
 from typing import Optional
+from datetime import date
 
 async def get_estado_solicitudes(db: AsyncSession):
     try:
@@ -35,14 +36,34 @@ async def get_estado_solicitudes(db: AsyncSession):
 
 async def create_estado_solicitud(db: AsyncSession, estado_solicitud_data: dict):
     try:
+        # Agregamos la fecha actual al diccionario de datos
+        estado_solicitud_data['fecha_cambio_estado_solicitud'] = date.today()
+        
         nuevo_estado_solicitud = EstadoSolicitud(**estado_solicitud_data)
         db.add(nuevo_estado_solicitud)
+        await db.flush()
+        
         await db.commit()
+        
+        # Actualizar la secuencia
         await db.execute(
             text("SELECT setval('estado_solicitud_id_estado_solicitud_seq', (SELECT MAX(id_estado_solicitud) FROM estado_solicitud))")
-        ) 
-        await db.refresh(nuevo_estado_solicitud)
-        return nuevo_estado_solicitud
+        )
+        
+        # Obtener el estado_solicitud con sus relaciones
+        stmt = (
+            select(EstadoSolicitud)
+            .options(
+                selectinload(EstadoSolicitud.estado)
+            )
+            .where(EstadoSolicitud.id_estado_solicitud == nuevo_estado_solicitud.id_estado_solicitud)
+        )
+        
+        result = await db.execute(stmt)
+        estado_solicitud_completo = result.unique().scalars().first()
+        
+        return estado_solicitud_completo
+        
     except Exception as e:
         await db.rollback()
         raise Exception(f"Error al crear estado de solicitud: {str(e)}")
