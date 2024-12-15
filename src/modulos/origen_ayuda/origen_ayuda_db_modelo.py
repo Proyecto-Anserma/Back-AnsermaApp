@@ -1,12 +1,12 @@
 from sqlalchemy import Column, Integer, String, Numeric
-from src.modulos import Base
+from database.db_config import BaseAnserma
 
-class OrigenAyuda(Base):
+class OrigenAyuda(BaseAnserma):
     __tablename__ = "origen_ayuda"
 
-    id_origen_ayuda = Column(Integer, primary_key=True, index=True)
-    nombre_entidad_origen_ayuda = Column(String(100), nullable=False)
-    nit = Column(String(50), nullable=False)
-    telefono_origen_ayuda = Column(Numeric(50), nullable=False)
-    correo_electronico_origen_ayuda = Column(String(100), nullable=False)
-    zona_territorial_origen_ayuda = Column(String(100), nullable=False)
+    id_origen_ayuda = Column(Integer, primary_key=True, autoincrement=True)
+    nombre_entidad_origen_ayuda = Column(String(100))
+    nit = Column(String(50))
+    telefono_origen_ayuda = Column(Numeric(50))
+    correo_electronico_origen_ayuda = Column(String(100))
+    zona_territorial_origen_ayuda = Column(String(100))

@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
-from .origen_ayuda_modelos import OrigenAyudaCreate, OrigenAyudaResponse
+from .origen_ayuda_modelos import OrigenAyudaCreate, OrigenAyudaResponse, OrigenAyudaFiltro
 from database.db_config import get_db_anserma
-from .origen_ayuda_servicio import get_origenes_ayuda, create_origen_ayuda, update_origen_ayuda,delete_origen_ayuda
+from .origen_ayuda_servicio import get_origenes_ayuda, create_origen_ayuda, update_origen_ayuda,delete_origen_ayuda, filtrar_origen_ayuda_por_nit
 
 router = APIRouter()
 
@@ -78,4 +78,18 @@ async def delete_origen_ayuda_endpoint(
         raise HTTPException(
             status_code=400,
             detail=f"Error al eliminar origen de ayuda: {str(e)}"
+        )
+
+@router.post("/filtrar/", response_model=List[OrigenAyudaResponse])
+async def filtrar_origen_ayuda_endpoint(
+    filtros: OrigenAyudaFiltro = Body(...),
+    db: AsyncSession = Depends(get_db_anserma)
+):
+    try:
+        origenes = await filtrar_origen_ayuda_por_nit(db, filtros.nit)
+        return origenes
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error al filtrar origen ayuda: {str(e)}"
         )
