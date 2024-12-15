@@ -28,7 +28,7 @@ router.include_router(solicitud_router, prefix="/solicitudes", tags=["solicitude
 router.include_router(estado_solicitud_router, prefix="/estado_solicitudes", tags=["estado_solicitudes"])
 router.include_router(solicitud_ayuda_router, prefix="/solicitudes_ayuda", tags=["solicitudes_ayudas"])
 router.include_router(ayuda_router, prefix="/ayudas", tags=["ayudas"])
-router.include_router(origen_ayuda_router, prefix="/origenes_ayuda", tags=["origenes_ayudas"])
+router.include_router(origen_ayuda_router, prefix="/api", tags=["Origenes de ayuda"])
 router.include_router(cantidad_origen_ayuda_router, prefix="/cantidades_origen_ayuda", tags=["cantidades_origenes_ayudas"])
 router.include_router(ubicacion_router, prefix="/ubicaciones", tags=["ubicaciones"])
 router.include_router(usuario_router, prefix="/usuarios", tags=["usuarios"])
@@ -42,7 +42,6 @@ router.include_router(genero_router, prefix="/genero", tags=["genero"])
 router.include_router(auth_rutas.router, tags=["authentication"])
 
 router.include_router(estado_router, prefix="/api", tags=["Estados"])
-router.include_router(origen_ayuda_router, prefix="/api", tags=["Origenes de ayuda"])
 
 def include_routes(app):
     app.include_router(router)

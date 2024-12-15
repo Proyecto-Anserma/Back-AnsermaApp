@@ -1,18 +1,20 @@
 from pydantic import BaseModel
 from datetime import date
+from typing import Optional
 
 class CantidadOrigenAyudaBase(BaseModel):
     cantidad_origen_ayuda: int
-    fecha_entrega_cantidad_origen_ayuda: date
 
 class CantidadOrigenAyudaCreate(CantidadOrigenAyudaBase):
     id_origen_ayuda: int
     id_ayuda: int
+    fecha_entrega_cantidad_origen_ayuda: Optional[date] = None
 
 class CantidadOrigenAyudaResponse(CantidadOrigenAyudaBase):
     id_cantidad_origen_ayuda: int
     id_origen_ayuda: int
     id_ayuda: int
+    fecha_entrega_cantidad_origen_ayuda: date
 
     class Config:
-        orm_mode = True
+        from_attributes = True
