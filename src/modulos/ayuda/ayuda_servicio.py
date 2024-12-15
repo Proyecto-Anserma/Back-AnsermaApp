@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import text, update as sql_update, delete as sql_delete
+from sqlalchemy.orm import selectinload
 from .ayuda_db_modelo import Ayuda
 from .ayuda_modelos import AyudaCreate, AyudasFiltrar
 
@@ -68,19 +69,18 @@ async def delete_ayuda(db: AsyncSession, ayuda_id: int):
         raise Exception(f"Error al eliminar ayuda: {str(e)}")
 
 
-async def filtrar_ayudas(db: AsyncSession, ayuda_data: AyudasFiltrar):
+async def filtrar_ayudas(db: AsyncSession, filtros: AyudasFiltrar):
     try:
-        # Construir la consulta inicial
-        query = select(Ayuda)
+        query = (
+            select(Ayuda)
+            .options(selectinload(Ayuda.solicitudes_ayuda))
+            .options(selectinload(Ayuda.cantidades_origen_ayuda))
+        )
 
-        # Agregar condiciones dinámicamente basadas en los filtros
-        
-        if ayuda_data.fecha_creacion_ayuda:
-            query = query.where(Ayuda.fecha_creacion_ayuda == ayuda_data.fecha_creacion_ayuda)
- 
-        # Ejecutar la consulta con los filtros aplicados
+        if filtros.fecha_creacion_ayuda:
+            query = query.where(Ayuda.fecha_creacion_ayuda == filtros.fecha_creacion_ayuda)
+
         result = await db.execute(query)
-        ayudas = result.scalars().all()
-        return ayudas
+        return result.unique().scalars().all()
     except Exception as e:
         raise Exception(f"Error al filtrar ayudas: {str(e)}")      

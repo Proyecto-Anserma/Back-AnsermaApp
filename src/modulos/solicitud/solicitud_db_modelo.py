@@ -19,3 +19,4 @@ class Solicitud(BaseAnserma):
     tipo_solicitud = relationship("TipoSolicitud", lazy="joined", innerjoin=True)
     ubicacion = relationship("Ubicacion", lazy="joined", innerjoin=True)
     estados = relationship("EstadoSolicitud", back_populates="solicitud", lazy="joined")
+    solicitudes_ayuda = relationship("SolicitudAyuda", back_populates="solicitud")
