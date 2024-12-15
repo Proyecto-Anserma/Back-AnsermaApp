@@ -43,13 +43,16 @@ async def create_solicitud_endpoint(solicitud: SolicitudCreate, db: AsyncSession
 @router.put("/editar-solicitud/{solicitud_id}", response_model=SolicitudResponse)
 async def update_solicitud_endpoint(
     solicitud_id: int, 
-    solicitud: SolicitudCreate,  # Cambiar a SolicitudCreate en lugar de SolicitudBase
+    solicitud: SolicitudCreate,
     db: AsyncSession = Depends(get_db_anserma)
 ):
     try:
-        updated_solicitud = await update_solicitud(db, solicitud_id, solicitud)
-        if not updated_solicitud:
+        # Verificar que la solicitud existe antes de actualizar
+        existing_solicitud = await get_solicitud_by_id(db, solicitud_id)
+        if not existing_solicitud:
             raise HTTPException(status_code=404, detail="Solicitud no encontrada")
+            
+        updated_solicitud = await update_solicitud(db, solicitud_id, solicitud)
         return updated_solicitud
     except Exception as e:
         raise HTTPException(

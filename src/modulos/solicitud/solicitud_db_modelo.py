@@ -16,6 +16,6 @@ class Solicitud(BaseAnserma):
     id_ubicacion_solicitud = Column(Integer, ForeignKey("ubicacion.id_ubicacion"), nullable=False)
     id_ciudadano_solicitud = Column(String, ForeignKey("ciudadano.numero_identificacion_ciudadano"), nullable=False)
 
-   
-    tipo_solicitud = relationship("TipoSolicitud", back_populates="solicitudes")
-    ubicacion = relationship("Ubicacion", back_populates="solicitudes")
+    tipo_solicitud = relationship("TipoSolicitud", lazy="joined", innerjoin=True)
+    ubicacion = relationship("Ubicacion", lazy="joined", innerjoin=True)
+    estados = relationship("EstadoSolicitud", back_populates="solicitud", lazy="joined")
