@@ -27,12 +27,12 @@ async def create_solicitud_ayuda_endpoint(
     db: AsyncSession = Depends(get_db_anserma)
 ):
     try:
-        result = await create_solicitud(db, solicitud_ayuda.dict())
+        result = await create_solicitud_ayuda(db, solicitud_ayuda)
         return result
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            detail=f"Error al crear la solicitud de ayuda: {str(e)}"
         )
         
 

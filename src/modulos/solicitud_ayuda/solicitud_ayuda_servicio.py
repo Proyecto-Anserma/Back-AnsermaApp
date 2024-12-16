@@ -1,8 +1,14 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import text, update as sql_update, delete as sql_delete
+from datetime import date
 from .solicitud_ayuda_db_modelo import SolicitudAyuda
 from .solicitud_ayuda_modelos import SolicitudAyudaCreate
+from src.modulos.estado_solicitud.estado_solicitud_db_modelo import EstadoSolicitud
+import logging
+
+# Configurar logging
+logger = logging.getLogger(__name__)
 
 async def get_solicitudes_ayuda(db: AsyncSession):
     try:
@@ -13,19 +19,57 @@ async def get_solicitudes_ayuda(db: AsyncSession):
 
 async def create_solicitud_ayuda(db: AsyncSession, solicitud_ayuda_data: SolicitudAyudaCreate):
     try:
+        # Crear la solicitud de ayuda
+        logger.info(f"Creando solicitud de ayuda con datos: {solicitud_ayuda_data}")
         nueva_solicitud_ayuda = SolicitudAyuda(**solicitud_ayuda_data.model_dump())
         db.add(nueva_solicitud_ayuda)
+        await db.flush()
+        
+        logger.info(f"Solicitud de ayuda creada con ID: {nueva_solicitud_ayuda.id_solicitud_ayuda}")
+
+        # Crear el estado de la solicitud
+        nuevo_estado_solicitud = EstadoSolicitud(
+            fecha_cambio_estado_solicitud=date.today(),
+            observacion_solicitud="Solicitud asignada con éxito",
+            id_solicitud=solicitud_ayuda_data.id_solicitud,
+            id_estado=2
+        )
+        
+        logger.info(f"Creando estado de solicitud para solicitud ID: {solicitud_ayuda_data.id_solicitud}")
+        db.add(nuevo_estado_solicitud)
+        
+        # Confirmar ambas operaciones
         await db.commit()
+        logger.info("Transacción completada exitosamente")
+        
+        # Actualizar la secuencia
         await db.execute(
             text("SELECT setval('solicitud_ayuda_id_solicitud_ayuda_seq', (SELECT MAX(id_solicitud_ayuda) FROM solicitud_ayuda))")
         )
+        
         await db.refresh(nueva_solicitud_ayuda)
         return nueva_solicitud_ayuda
+        
     except Exception as e:
+        logger.error(f"Error en create_solicitud_ayuda: {str(e)}")
         await db.rollback()
-        raise Exception(f"Error al crear solicitud de ayuda: {str(e)}")
+        raise Exception(f"Error al crear solicitud de ayuda y su estado: {str(e)}")
 
-    
+async def create_estado_solicitud(db: AsyncSession, id_solicitud: int):
+    """Función auxiliar para crear el estado de la solicitud"""
+    try:
+        nuevo_estado = EstadoSolicitud(
+            fecha_cambio_estado_solicitud=date.today(),
+            observacion_solicitud="Solicitud asignada con éxito",
+            id_solicitud=id_solicitud,
+            id_estado=2
+        )
+        db.add(nuevo_estado)
+        await db.flush()
+        return nuevo_estado
+    except Exception as e:
+        logger.error(f"Error creando estado de solicitud: {str(e)}")
+        raise
 
 async def update_solicitud_ayuda(
     db: AsyncSession, solicitud_ayuda_id: int, solicitud_ayuda_data: SolicitudAyudaCreate
