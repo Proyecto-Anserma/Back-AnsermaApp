@@ -18,8 +18,19 @@ async def get_ayudas(db: AsyncSession):
             )
         )
         result = await db.execute(query)
-        return result.unique().scalars().all()
+        ayudas = result.unique().scalars().all()
+        
+        # Verificar que los datos estén presentes
+        for ayuda in ayudas:
+            print(f"Ayuda ID: {ayuda.id_ayuda}")
+            print(f"Descripción: {ayuda.descripcion_solicitud}")
+            print(f"Fecha: {ayuda.fecha_creacion_ayuda}")
+            print(f"Observación: {ayuda.observacion_ayuda}")
+            print(f"Foto: {ayuda.foto_solicitud}")
+            
+        return ayudas
     except Exception as e:
+        print(f"Error en get_ayudas: {str(e)}")  # Debug
         raise Exception(f"Error al obtener ayudas: {str(e)}")
 
 async def create_ayuda(db: AsyncSession, ayuda_data: AyudaCreate):

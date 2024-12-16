@@ -1,31 +1,21 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from datetime import date
-from typing import Any, Optional, List
-from src.modulos.cantidad_origen_ayuda.cantidad_origen_ayuda_modelos import CantidadOrigenAyudaResponse
-
-class SolicitudAyudaEnAyuda(BaseModel):
-    id_solicitud_ayuda: int
-    cantidad_solicitud_ayuda: int
-    fecha_entrega_solicitud_ayuda: date
-    foto_entrega_solicitud_ayuda: str
-    id_solicitud: int
-    id_ayuda: int
-
-    class Config:
-        from_attributes = True
+from typing import List, Optional
+from ..solicitud_ayuda.solicitud_ayuda_modelos import SolicitudAyudaResponse
+from ..cantidad_origen_ayuda.cantidad_origen_ayuda_modelos import CantidadOrigenAyudaResponse
 
 class AyudaBase(BaseModel):
-    descripcion_solicitud: str = Field(..., max_length=250)
+    descripcion_solicitud: str
     fecha_creacion_ayuda: date
-    observacion_ayuda: str = Field(..., max_length=500)
-    foto_solicitud: str
+    observacion_ayuda: Optional[str] = None
+    foto_solicitud: Optional[str] = None
 
 class AyudaCreate(AyudaBase):
     pass
 
 class AyudaResponse(AyudaBase):
     id_ayuda: int
-    solicitudes_ayuda: List[SolicitudAyudaEnAyuda] = []
+    solicitudes_ayuda: List[SolicitudAyudaResponse] = []
     cantidades_origen_ayuda: List[CantidadOrigenAyudaResponse] = []
 
     class Config:
