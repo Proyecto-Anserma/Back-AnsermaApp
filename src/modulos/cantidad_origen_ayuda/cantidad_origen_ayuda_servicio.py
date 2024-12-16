@@ -1,3 +1,4 @@
+from datetime import date
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import text, update as sql_update, delete as sql_delete
@@ -16,18 +17,28 @@ async def create_cantidad_origen_ayuda(
     db: AsyncSession, cantidad_origen_ayuda_data: CantidadOrigenAyudaCreate
 ):
     try:
-        nueva_cantidad_origen_ayuda = CantidadOrigenAyuda(**cantidad_origen_ayuda_data.model_dump())
-        db.add(nueva_cantidad_origen_ayuda)
+        # Convertir el modelo Pydantic a diccionario
+        data_dict = cantidad_origen_ayuda_data.model_dump(exclude_unset=True)
+        
+        # Si no se proporcionó fecha, usar la fecha actual
+        if 'fecha_entrega_cantidad_origen_ayuda' not in data_dict or data_dict['fecha_entrega_cantidad_origen_ayuda'] is None:
+            data_dict['fecha_entrega_cantidad_origen_ayuda'] = date.today()
+
+        nueva_cantidad = CantidadOrigenAyuda(**data_dict)
+        db.add(nueva_cantidad)
         await db.commit()
-        # Actualiza la secuencia para mantener la consistencia con el valor máximo de la columna
+
+        # Actualizar la secuencia
         await db.execute(
             text("SELECT setval('cantidad_origen_ayuda_id_cantidad_origen_ayuda_seq', (SELECT MAX(id_cantidad_origen_ayuda) FROM cantidad_origen_ayuda))")
         )
-        await db.refresh(nueva_cantidad_origen_ayuda)
-        return nueva_cantidad_origen_ayuda
+        
+        await db.refresh(nueva_cantidad)
+        return nueva_cantidad
+        
     except Exception as e:
         await db.rollback()
-        raise Exception(f"Error al crear cantidad de origen de ayuda: {str(e)}")
+        raise Exception(f"Error al crear cantidad de origen ayuda: {str(e)}")
     
 
 async def update_cantidad_origen_ayuda(

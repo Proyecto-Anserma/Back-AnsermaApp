@@ -2,7 +2,6 @@ from fastapi import APIRouter
 from src.modulos.ciudadano.ciudadano_rutas import router as ciudadano_router
 from src.modulos.solicitud.solicitud_rutas import router as solicitud_router
 from src.modulos.solicitud_ayuda.solicitud_ayuda_rutas import router as solicitud_ayuda_router
-from src.modulos.origen_ayuda.origen_ayuda_rutas import router as origen_ayuda_router
 from src.modulos.ayuda.ayuda_rutas import router as ayuda_router
 from src.modulos.cantidad_origen_ayuda.cantidad_origen_ayuda_rutas import router as cantidad_origen_ayuda_router
 from src.modulos.referencias.referencias_rutas import router as referencias_router
@@ -14,6 +13,8 @@ from src.modulos.pertenencia_etnica.pertenencia_etnica_rutas import router as pe
 
 from src.modulos.genero.genero_rutas import router as genero_router
 from src.auth import auth_rutas
+from src.modulos.estado.estado_rutas import router as estado_router
+from src.modulos.origen_ayuda.origen_ayuda_rutas import router as origen_ayuda_router
 
 
 
@@ -27,7 +28,7 @@ router.include_router(solicitud_router, prefix="/solicitudes", tags=["solicitude
 router.include_router(estado_solicitud_router, prefix="/estado_solicitudes", tags=["estado_solicitudes"])
 router.include_router(solicitud_ayuda_router, prefix="/solicitudes_ayuda", tags=["solicitudes_ayudas"])
 router.include_router(ayuda_router, prefix="/ayudas", tags=["ayudas"])
-router.include_router(origen_ayuda_router, prefix="/origenes_ayuda", tags=["origenes_ayudas"])
+router.include_router(origen_ayuda_router, prefix="/api", tags=["Origenes de ayuda"])
 router.include_router(cantidad_origen_ayuda_router, prefix="/cantidades_origen_ayuda", tags=["cantidades_origenes_ayudas"])
 router.include_router(ubicacion_router, prefix="/ubicaciones", tags=["ubicaciones"])
 router.include_router(usuario_router, prefix="/usuarios", tags=["usuarios"])
@@ -39,6 +40,8 @@ router.include_router(pertenencia_etnica_router, prefix="/pertenencia_etnica", t
 router.include_router(genero_router, prefix="/genero", tags=["genero"])
 
 router.include_router(auth_rutas.router, tags=["authentication"])
+
+router.include_router(estado_router, prefix="/api", tags=["Estados"])
 
 def include_routes(app):
     app.include_router(router)

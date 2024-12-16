@@ -68,3 +68,16 @@ async def delete_origen_ayuda(db: AsyncSession, origen_ayuda_id: int):
     except Exception as e:
         await db.rollback()
         raise Exception(f"Error al eliminar origen de ayuda: {str(e)}")
+
+async def filtrar_origen_ayuda_por_nit(db: AsyncSession, nit: str):
+    try:
+        query = select(OrigenAyuda)
+        
+        if nit:
+            query = query.where(OrigenAyuda.nit == nit)
+            
+        result = await db.execute(query)
+        return result.scalars().all()
+        
+    except Exception as e:
+        raise Exception(f"Error al filtrar origen ayuda: {str(e)}")

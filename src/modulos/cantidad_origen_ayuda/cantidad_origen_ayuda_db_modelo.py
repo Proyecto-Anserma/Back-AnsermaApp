@@ -1,8 +1,8 @@
 from sqlalchemy import Column, Integer, ForeignKey, Date
 from sqlalchemy.orm import relationship
-from src.modulos import Base
+from database.db_config import BaseAnserma
 
-class CantidadOrigenAyuda(Base):
+class CantidadOrigenAyuda(BaseAnserma):
     __tablename__ = "cantidad_origen_ayuda"
 
     id_cantidad_origen_ayuda = Column(Integer, primary_key=True, index=True)

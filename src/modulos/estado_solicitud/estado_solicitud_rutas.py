@@ -25,7 +25,7 @@ async def read_estado_solicitudes(db: AsyncSession = Depends(get_db_anserma)):
             detail=f"Error al obtener estados de solicitud: {str(e)}"
         )
 
-@router.post("/estado_solicitudes/", response_model=EstadoSolicitudResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/crear_estado_solicitudes/", response_model=EstadoSolicitudResponse, status_code=status.HTTP_201_CREATED)
 async def create_estado_solicitud_endpoint(
     estado_solicitud: EstadoSolicitudCreate, db: AsyncSession = Depends(get_db_anserma)
 ):

@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import text, update as sql_update, delete as sql_delete
+from sqlalchemy.orm import selectinload
 from .ayuda_db_modelo import Ayuda
 from .ayuda_modelos import AyudaCreate, AyudasFiltrar
 
@@ -17,11 +18,22 @@ async def create_ayuda(db: AsyncSession, ayuda_data: AyudaCreate):
         nueva_ayuda = Ayuda(**ayuda_data.model_dump())
         db.add(nueva_ayuda)
         await db.commit()
+        
         await db.execute(
             text("SELECT setval('ayuda_id_ayuda_seq', (SELECT MAX(id_ayuda) FROM ayuda))")
         )
-        await db.refresh(nueva_ayuda)
-        return nueva_ayuda
+        
+        # Cargamos la ayuda creada con sus relaciones
+        query = (
+            select(Ayuda)
+            .options(selectinload(Ayuda.solicitudes_ayuda))
+            .options(selectinload(Ayuda.cantidades_origen_ayuda))
+            .where(Ayuda.id_ayuda == nueva_ayuda.id_ayuda)
+        )
+        result = await db.execute(query)
+        nueva_ayuda_con_relaciones = result.unique().scalar_one_or_none()
+        
+        return nueva_ayuda_con_relaciones
     except Exception as e:
         await db.rollback()
         raise Exception(f"Error al crear ayuda: {str(e)}")
@@ -37,16 +49,28 @@ async def update_ayuda(db: AsyncSession, ayuda_id: int, ayuda_data: AyudaCreate)
     :return: La ayuda actualizada o None si no se encuentra
     """
     try:
+        # Primero actualizamos los datos
         result = await db.execute(
             sql_update(Ayuda)
             .where(Ayuda.id_ayuda == ayuda_id)
-            .values(**ayuda_data.dict())
+            .values(**ayuda_data.model_dump())
             .returning(Ayuda)
         )
         updated_ayuda = result.scalar_one_or_none()
+        
         if updated_ayuda:
             await db.commit()
-            await db.refresh(updated_ayuda)
+            
+            # Cargamos la ayuda actualizada con sus relaciones
+            query = (
+                select(Ayuda)
+                .options(selectinload(Ayuda.solicitudes_ayuda))
+                .options(selectinload(Ayuda.cantidades_origen_ayuda))
+                .where(Ayuda.id_ayuda == ayuda_id)
+            )
+            result = await db.execute(query)
+            updated_ayuda = result.unique().scalar_one_or_none()
+            
         return updated_ayuda
     except Exception as e:
         await db.rollback()
@@ -68,19 +92,18 @@ async def delete_ayuda(db: AsyncSession, ayuda_id: int):
         raise Exception(f"Error al eliminar ayuda: {str(e)}")
 
 
-async def filtrar_ayudas(db: AsyncSession, ayuda_data: AyudasFiltrar):
+async def filtrar_ayudas(db: AsyncSession, filtros: AyudasFiltrar):
     try:
-        # Construir la consulta inicial
-        query = select(Ayuda)
+        query = (
+            select(Ayuda)
+            .options(selectinload(Ayuda.solicitudes_ayuda))
+            .options(selectinload(Ayuda.cantidades_origen_ayuda))
+        )
 
-        # Agregar condiciones dinámicamente basadas en los filtros
-        
-        if ayuda_data.fecha_creacion_ayuda:
-            query = query.where(Ayuda.fecha_creacion_ayuda == ayuda_data.fecha_creacion_ayuda)
- 
-        # Ejecutar la consulta con los filtros aplicados
+        if filtros.fecha_creacion_ayuda:
+            query = query.where(Ayuda.fecha_creacion_ayuda == filtros.fecha_creacion_ayuda)
+
         result = await db.execute(query)
-        ayudas = result.scalars().all()
-        return ayudas
+        return result.unique().scalars().all()
     except Exception as e:
         raise Exception(f"Error al filtrar ayudas: {str(e)}")      

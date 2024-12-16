@@ -13,4 +13,8 @@ class SolicitudAyuda(BaseAnserma):
     id_solicitud = Column(Integer, ForeignKey("solicitud.id_solicitud", ondelete="CASCADE"), nullable=False)
     id_ayuda = Column(Integer, ForeignKey("ayuda.id_ayuda", ondelete="CASCADE"), nullable=False)
 
+    # Definir las relaciones
+    solicitud = relationship("Solicitud", back_populates="solicitudes_ayuda")
+    ayuda = relationship("Ayuda", back_populates="solicitudes_ayuda")
+
    
