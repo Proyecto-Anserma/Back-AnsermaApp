@@ -1,11 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import text, update as sql_update, delete as sql_delete
+from sqlalchemy import text, update as sql_update, delete as sql_delete, func
 from sqlalchemy.orm import selectinload, joinedload
 from .estado_solicitud_db_modelo import EstadoSolicitud
-from .estado_solicitud_modelos import EstadoSolicitudUpdate
+from .estado_solicitud_modelos import EstadoSolicitudUpdate, ReporteSolicitudFiltro, ReporteEstadoResponse
 from src.modulos.solicitud.solicitud_db_modelo import Solicitud
-from typing import Optional
+from typing import Optional, List
 from datetime import date
 
 async def get_estado_solicitudes(db: AsyncSession):
@@ -140,3 +140,56 @@ async def get_ultimo_estado_solicitud(db: AsyncSession, id_solicitud: Optional[i
     except Exception as e:
         print(f"Error detallado: {str(e)}")
         raise Exception(f"Error al obtener el último estado de la solicitud: {str(e)}")
+    
+async def get_reporte_solicitudes(db: AsyncSession, filtro: ReporteSolicitudFiltro) -> List[ReporteEstadoResponse]:
+    try:
+        # Iniciar la consulta base
+        query = (
+            select(EstadoSolicitud)
+            .options(
+                joinedload(EstadoSolicitud.estado),
+                joinedload(EstadoSolicitud.solicitud)
+            )
+        )
+        
+        # Aplicar filtros si existen
+        if filtro.fecha_inicio:
+            query = query.where(EstadoSolicitud.fecha_cambio_estado_solicitud >= filtro.fecha_inicio)
+        
+        if filtro.fecha_fin:
+            query = query.where(EstadoSolicitud.fecha_cambio_estado_solicitud <= filtro.fecha_fin)
+            
+        # Ordenar por id_solicitud y fecha para obtener los últimos estados
+        query = query.order_by(
+            EstadoSolicitud.id_solicitud,
+            EstadoSolicitud.fecha_cambio_estado_solicitud.desc()
+        )
+        
+        result = await db.execute(query)
+        estados = result.unique().scalars().all()
+        
+        # Obtener solo el último estado de cada solicitud
+        ultimos_estados = {}
+        for estado in estados:
+            if estado.id_solicitud not in ultimos_estados:
+                ultimos_estados[estado.id_solicitud] = estado
+
+        # Contar solicitudes por id_estado
+        conteo_estados = {}
+        for estado in ultimos_estados.values():
+            if filtro.id_estado_solicitud and estado.id_estado != filtro.id_estado_solicitud:
+                continue
+            conteo_estados[estado.id_estado] = conteo_estados.get(estado.id_estado, 0) + 1
+
+        # Convertir a formato de respuesta
+        return [
+            ReporteEstadoResponse(
+                id_estado_solicitud=id_estado,
+                cantidad_solicitudes=cantidad
+            )
+            for id_estado, cantidad in conteo_estados.items()
+        ]
+
+    except Exception as e:
+        print(f"Error detallado: {str(e)}")
+        raise Exception(f"Error al obtener el reporte de solicitudes: {str(e)}")

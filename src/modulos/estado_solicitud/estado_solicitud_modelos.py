@@ -32,3 +32,12 @@ class EstadoSolicitudResponse(EstadoSolicitudBase):
 
 class EstadoSolicitudFiltro(BaseModel):
     id_solicitud: Optional[int] = None
+
+class ReporteSolicitudFiltro(BaseModel):
+    fecha_inicio: Optional[date] = None
+    fecha_fin: Optional[date] = None
+    id_estado_solicitud: Optional[int] = None
+
+class ReporteEstadoResponse(BaseModel):
+    id_estado_solicitud: int
+    cantidad_solicitudes: int

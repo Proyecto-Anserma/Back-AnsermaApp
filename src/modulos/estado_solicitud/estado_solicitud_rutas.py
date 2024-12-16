@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
-from .estado_solicitud_modelos import EstadoSolicitudCreate, EstadoSolicitudResponse, EstadoSolicitudUpdate, EstadoSolicitudFiltro
+from .estado_solicitud_modelos import EstadoSolicitudCreate, EstadoSolicitudResponse, EstadoSolicitudUpdate, EstadoSolicitudFiltro, ReporteSolicitudFiltro, ReporteEstadoResponse
 from database.db_config import get_db_anserma
 from .estado_solicitud_servicio import (
     get_estado_solicitudes,
@@ -9,6 +9,7 @@ from .estado_solicitud_servicio import (
     update_estado_solicitud,
     delete_estado_solicitud,
     get_ultimo_estado_solicitud,
+    get_reporte_solicitudes,
 )
 
 router = APIRouter()
@@ -69,7 +70,7 @@ async def delete_estado_solicitud_endpoint(estado_solicitud_id: int, db: AsyncSe
         )
 
 @router.post("/ultimo-estado-solicitud/", response_model=List[EstadoSolicitudResponse])
-async def get_ultimo_estado_solicitud_endpoint(
+async def ultimo_estado_solicitud_endpoint(
     filtro: EstadoSolicitudFiltro,
     db: AsyncSession = Depends(get_db_anserma)
 ):
@@ -85,4 +86,23 @@ async def get_ultimo_estado_solicitud_endpoint(
         raise HTTPException(
             status_code=500,
             detail=f"Error al obtener los últimos estados de solicitud: {str(e)}"
+        )
+
+@router.post("/reportes-solicitudes/", response_model=List[ReporteEstadoResponse])
+async def reportes_solicitudes_endpoint(
+    filtro: ReporteSolicitudFiltro,
+    db: AsyncSession = Depends(get_db_anserma)
+):
+    try:
+        reportes = await get_reporte_solicitudes(db, filtro)
+        if not reportes:
+            raise HTTPException(
+                status_code=404,
+                detail="No se encontraron registros para el reporte"
+            )
+        return reportes
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al generar el reporte de solicitudes: {str(e)}"
         )
