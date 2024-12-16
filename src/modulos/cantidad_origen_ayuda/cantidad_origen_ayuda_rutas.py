@@ -23,7 +23,7 @@ async def read_cantidades_origen_ayuda(db: AsyncSession = Depends(get_db_anserma
             detail=f"Error al obtener cantidades de origen de ayuda: {str(e)}"
         )
 
-@router.post("/cantidades_origen_ayuda/", response_model=CantidadOrigenAyudaResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/crear_cantidades_origen_ayuda/", response_model=CantidadOrigenAyudaResponse, status_code=status.HTTP_201_CREATED)
 async def create_cantidad_origen_ayuda_endpoint(
     cantidad_origen_ayuda: CantidadOrigenAyudaCreate, 
     db: AsyncSession = Depends(get_db_anserma)

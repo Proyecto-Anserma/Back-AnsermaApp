@@ -2,6 +2,7 @@ from datetime import date
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import text, update as sql_update, delete as sql_delete
+from sqlalchemy.orm import selectinload
 from .cantidad_origen_ayuda_db_modelo import CantidadOrigenAyuda
 from .cantidad_origen_ayuda_modelos import CantidadOrigenAyudaCreate
 
@@ -18,23 +19,35 @@ async def create_cantidad_origen_ayuda(
 ):
     try:
         # Convertir el modelo Pydantic a diccionario
-        data_dict = cantidad_origen_ayuda_data.model_dump(exclude_unset=True)
+        data_dict = cantidad_origen_ayuda_data.model_dump()
         
-        # Si no se proporcionó fecha, usar la fecha actual
-        if 'fecha_entrega_cantidad_origen_ayuda' not in data_dict or data_dict['fecha_entrega_cantidad_origen_ayuda'] is None:
-            data_dict['fecha_entrega_cantidad_origen_ayuda'] = date.today()
+        # Agregar la fecha actual
+        data_dict['fecha_entrega_cantidad_origen_ayuda'] = date.today()
 
         nueva_cantidad = CantidadOrigenAyuda(**data_dict)
         db.add(nueva_cantidad)
         await db.commit()
+        await db.refresh(nueva_cantidad)
 
         # Actualizar la secuencia
         await db.execute(
             text("SELECT setval('cantidad_origen_ayuda_id_cantidad_origen_ayuda_seq', (SELECT MAX(id_cantidad_origen_ayuda) FROM cantidad_origen_ayuda))")
         )
         
-        await db.refresh(nueva_cantidad)
-        return nueva_cantidad
+        # Cargar la cantidad con su relación origen_ayuda
+        query = (
+            select(CantidadOrigenAyuda)
+            .options(selectinload(CantidadOrigenAyuda.origen_ayuda))
+            .where(CantidadOrigenAyuda.id_cantidad_origen_ayuda == nueva_cantidad.id_cantidad_origen_ayuda)
+        )
+        
+        result = await db.execute(query)
+        nueva_cantidad_con_relaciones = result.unique().scalar_one_or_none()
+        
+        # Hacer commit para asegurar que todas las relaciones estén cargadas
+        await db.commit()
+        
+        return nueva_cantidad_con_relaciones
         
     except Exception as e:
         await db.rollback()
