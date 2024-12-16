@@ -68,3 +68,23 @@ async def delete_solicitud_ayuda(db: AsyncSession, solicitud_ayuda_id: int):
     except Exception as e:
         await db.rollback()
         raise Exception(f"Error al eliminar solicitud de ayuda: {str(e)}")
+
+async def create_solicitud(db: AsyncSession, solicitud_data: dict):
+    try:
+        # Si no se proporciona fecha_entrega_solicitud_ayuda, se establece como None
+        if 'fecha_entrega_solicitud_ayuda' not in solicitud_data:
+            solicitud_data['fecha_entrega_solicitud_ayuda'] = None
+            
+        # Si no se proporciona foto_entrega_solicitud_ayuda, se establece como None    
+        if 'foto_entrega_solicitud_ayuda' not in solicitud_data:
+            solicitud_data['foto_entrega_solicitud_ayuda'] = None
+            
+        nueva_solicitud = SolicitudAyuda(**solicitud_data)
+        db.add(nueva_solicitud)
+        await db.commit()
+        await db.refresh(nueva_solicitud)
+        return nueva_solicitud
+    except Exception as e:
+        print(f"Error creando solicitud: {str(e)}")  # Debug
+        await db.rollback()
+        raise
