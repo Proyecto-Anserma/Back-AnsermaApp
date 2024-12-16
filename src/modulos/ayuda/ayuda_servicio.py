@@ -9,8 +9,16 @@ from src.modulos.cantidad_origen_ayuda.cantidad_origen_ayuda_db_modelo import Ca
 
 async def get_ayudas(db: AsyncSession):
     try:
-        result = await db.execute(select(Ayuda))
-        return result.scalars().all()
+        query = (
+            select(Ayuda)
+            .options(selectinload(Ayuda.solicitudes_ayuda))
+            .options(
+                selectinload(Ayuda.cantidades_origen_ayuda)
+                .selectinload(CantidadOrigenAyuda.origen_ayuda)
+            )
+        )
+        result = await db.execute(query)
+        return result.unique().scalars().all()
     except Exception as e:
         raise Exception(f"Error al obtener ayudas: {str(e)}")
 
