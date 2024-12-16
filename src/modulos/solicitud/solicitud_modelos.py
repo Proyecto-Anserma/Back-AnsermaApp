@@ -18,10 +18,12 @@ class SolicitudBase(BaseModel):
     id_ubicacion_solicitud: int
     id_ciudadano_solicitud: str
     foto_solicitud: Optional[str] = None
+    cantidad_solicitud: int  # Nuevo campo
 
 class SolicitudFiltrar(BaseModel):
     descripcion_solicitud: Optional[str] = None
     id_ciudadano_solicitud: Optional[str] = None
+    cantidad_solicitud: Optional[int] = None
 
 class SolicitudCreate(SolicitudBase):
     geolocalizacion: str

@@ -15,6 +15,7 @@ class Solicitud(BaseAnserma):
     id_tipo_solicitud = Column(Integer, ForeignKey("tipo_solicitud.id_tipo_solicitud"), nullable=False)
     id_ubicacion_solicitud = Column(Integer, ForeignKey("ubicacion.id_ubicacion"), nullable=False)
     id_ciudadano_solicitud = Column(String, ForeignKey("ciudadano.numero_identificacion_ciudadano"), nullable=False)
+    cantidad_solicitud = Column(Integer, nullable=False)
 
     tipo_solicitud = relationship("TipoSolicitud", lazy="joined", innerjoin=True)
     ubicacion = relationship("Ubicacion", lazy="joined", innerjoin=True)
