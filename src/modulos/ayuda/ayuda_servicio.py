@@ -4,6 +4,7 @@ from sqlalchemy import text, update as sql_update, delete as sql_delete
 from sqlalchemy.orm import selectinload
 from .ayuda_db_modelo import Ayuda
 from .ayuda_modelos import AyudaCreate, AyudasFiltrar
+from src.modulos.cantidad_origen_ayuda.cantidad_origen_ayuda_db_modelo import CantidadOrigenAyuda
 
 
 async def get_ayudas(db: AsyncSession):
@@ -97,7 +98,10 @@ async def filtrar_ayudas(db: AsyncSession, filtros: AyudasFiltrar):
         query = (
             select(Ayuda)
             .options(selectinload(Ayuda.solicitudes_ayuda))
-            .options(selectinload(Ayuda.cantidades_origen_ayuda))
+            .options(
+                selectinload(Ayuda.cantidades_origen_ayuda)
+                .selectinload(CantidadOrigenAyuda.origen_ayuda)
+            )
         )
 
         if filtros.fecha_creacion_ayuda:
