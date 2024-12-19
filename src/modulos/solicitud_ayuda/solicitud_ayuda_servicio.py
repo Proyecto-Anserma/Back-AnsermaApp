@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import text, update as sql_update, delete as sql_delete
-from datetime import date
+from datetime import date, datetime
 from .solicitud_ayuda_db_modelo import SolicitudAyuda
 from .solicitud_ayuda_modelos import SolicitudAyudaCreate
 from src.modulos.estado_solicitud.estado_solicitud_db_modelo import EstadoSolicitud
@@ -29,7 +29,7 @@ async def create_solicitud_ayuda(db: AsyncSession, solicitud_ayuda_data: Solicit
 
         # Crear el estado de la solicitud
         nuevo_estado_solicitud = EstadoSolicitud(
-            fecha_cambio_estado_solicitud=date.today(),
+            fecha_cambio_estado_solicitud=datetime.today(),
             observacion_solicitud="Solicitud asignada con éxito",
             id_solicitud=solicitud_ayuda_data.id_solicitud,
             id_estado=2

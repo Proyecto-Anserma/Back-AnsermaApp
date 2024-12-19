@@ -6,7 +6,7 @@ from .estado_solicitud_db_modelo import EstadoSolicitud
 from .estado_solicitud_modelos import EstadoSolicitudUpdate, ReporteSolicitudFiltro, ReporteEstadoResponse
 from src.modulos.solicitud.solicitud_db_modelo import Solicitud
 from typing import Optional, List
-from datetime import date
+from datetime import date, datetime
 
 async def get_estado_solicitudes(db: AsyncSession):
     try:
@@ -36,8 +36,8 @@ async def get_estado_solicitudes(db: AsyncSession):
 
 async def create_estado_solicitud(db: AsyncSession, estado_solicitud_data: dict):
     try:
-        # Agregamos la fecha actual al diccionario de datos
-        estado_solicitud_data['fecha_cambio_estado_solicitud'] = date.today()
+        # Agregamos la fecha y hora actual al diccionario de datos
+        estado_solicitud_data['fecha_cambio_estado_solicitud'] = datetime.now()
         
         nuevo_estado_solicitud = EstadoSolicitud(**estado_solicitud_data)
         db.add(nuevo_estado_solicitud)

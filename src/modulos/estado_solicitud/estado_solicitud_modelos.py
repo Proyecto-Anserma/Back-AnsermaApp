@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from pydantic import BaseModel, Field
 from typing import Any, Optional
 
@@ -24,7 +24,7 @@ class EstadoSolicitudUpdate(BaseModel):
     
 class EstadoSolicitudResponse(EstadoSolicitudBase):
     id_estado_solicitud: int
-    fecha_cambio_estado_solicitud: date
+    fecha_cambio_estado_solicitud: datetime
     estado: Optional[EstadoBase] = None
 
     class Config:
